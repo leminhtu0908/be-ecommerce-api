@@ -100,12 +100,12 @@ const NewCtrl = {
       typeNew,
       slug,
     };
-    await New.findOneAndUpdate(
+    const news = await New.findOneAndUpdate(
       { _id: id },
       { ...cloneNew, imageNew: imageUrl, imagePublicId: imagePublicId },
       { new: true }
     );
-    res.json({ message: " Update New Successfully" });
+    res.json({ news: news, message: " Update New Successfully" });
   },
 };
 

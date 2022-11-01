@@ -13,20 +13,19 @@ const ColorCtrl = {
     try {
       const { name } = req.body;
       const color = await Color.findOne({ name });
-      if (color)
-        return res.status(400).json({ message: "This color already exists." });
+      if (color) return res.status(400).send("This color already exists.");
       const newColor = new Color({ name });
       await newColor.save();
-      res.json({ color: newColor, message: "Created a color" });
+      res.json({ color: newColor, message: "Created successfully!" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
   },
   deleteColor: async (req, res) => {
     try {
-      const { id } = req.body;
+      const { id } = req.params;
       await Color.findByIdAndRemove(id);
-      res.json({ message: " Deleted a color" });
+      res.json({ message: " Deleted successfully!" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
@@ -34,8 +33,12 @@ const ColorCtrl = {
   updateColor: async (req, res) => {
     try {
       const { name, id } = req.body;
-      await Color.findOneAndUpdate({ _id: id }, { name });
-      res.json({ message: " Update a color" });
+      const color = await Color.findOneAndUpdate(
+        { _id: id },
+        { name },
+        { new: true }
+      );
+      res.json({ color: color, message: " Update successfully!" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

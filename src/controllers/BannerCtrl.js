@@ -39,7 +39,6 @@ const BannerCtrl = {
           addimage.imageBanner = uploadImage.secure_url;
           addimage.imagePublicId = uploadImage.public_id;
         }
-        console.log(addimage);
         const newBanner = new Banner(addimage);
         await newBanner.save();
         res.send({

@@ -68,7 +68,7 @@ router.post(
   TypeProductCtrl.createTypeProduct
 );
 router.delete(
-  "/type-product/delete",
+  "/type-product/delete/:id",
   checkIfAdmin,
   TypeProductCtrl.deleteTypeProduct
 );
@@ -82,14 +82,14 @@ router.put(
  */
 router.get("/color/all", ColorCtrl.getAllColor);
 router.post("/color/create", checkIfAdmin, ColorCtrl.createColor);
-router.delete("/color/delete", checkIfAdmin, ColorCtrl.deleteColor);
+router.delete("/color/delete/:id", checkIfAdmin, ColorCtrl.deleteColor);
 router.put("/color/update", checkIfAdmin, ColorCtrl.updateColor);
 /*
  *Memory
  */
 router.get("/memory/all", MemoryCtrl.getAllMemory);
 router.post("/memory/create", checkIfAdmin, MemoryCtrl.createMemory);
-router.delete("/memory/delete", checkIfAdmin, MemoryCtrl.deleteMemory);
+router.delete("/memory/delete/:id", checkIfAdmin, MemoryCtrl.deleteMemory);
 router.put("/memory/update", checkIfAdmin, MemoryCtrl.updateMemory);
 /*
  *Image
@@ -114,7 +114,7 @@ router.post(
   [checkIfAdmin, multerUpload.single("image")],
   BannerCtrl.uploadBanner
 );
-router.delete("/banner/delete", checkIfAdmin, BannerCtrl.deleteBanner);
+router.post("/banner/delete", checkIfAdmin, BannerCtrl.deleteBanner);
 /*
  *New
  */
@@ -124,7 +124,7 @@ router.post(
   [checkIfAdmin, multerUpload.single("image")],
   NewCtrl.createNew
 );
-router.delete("/new/delete", checkIfAdmin, NewCtrl.deleteNew);
+router.post("/new/delete", checkIfAdmin, NewCtrl.deleteNew);
 router.put(
   "/new/update",
   [checkIfAdmin, multerUpload.single("image")],

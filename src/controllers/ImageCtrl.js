@@ -39,7 +39,7 @@ const ImageCtrl = {
         }
         const newimage = new Image(addimage);
         await newimage.save();
-        res.send({ image: newimage, message: "Upload image successfully" });
+        res.send({ image: newimage });
       }
     } catch (error) {
       return res.status(500).json({ message: error.message });
@@ -63,7 +63,6 @@ const ImageCtrl = {
       const urls = await Promise.all(url);
       const p = urls.map((item) => item.secure_url);
       const newimage = new Image({ imageMultiple: p });
-      console.log("newImage", newimage, p);
       await newimage.save();
       res.send({
         newimage,

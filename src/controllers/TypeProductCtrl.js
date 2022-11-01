@@ -21,7 +21,7 @@ const TypeProductCtrl = {
       await newTypeProduct.save();
       res.json({
         type_product: newTypeProduct,
-        message: "Created a type product",
+        message: "Created successfully!",
       });
     } catch (error) {
       return res.status(500).json({ message: error.message });
@@ -29,9 +29,16 @@ const TypeProductCtrl = {
   },
   deleteTypeProduct: async (req, res) => {
     try {
-      const { id } = req.body;
-      await TypeProduct.findByIdAndDelete(id);
-      res.json({ message: " Deleted a type product" });
+      const { id } = req.params;
+      const typeproduct = await TypeProduct.findById(id);
+      if (typeproduct?.products.length > 0) {
+        return res
+          .status(400)
+          .send("Please delete all products with a relationship");
+      } else {
+        await TypeProduct.findByIdAndDelete(id);
+        res.json({ message: " Deleted successfully!" });
+      }
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
@@ -39,8 +46,12 @@ const TypeProductCtrl = {
   updateTypeProduct: async (req, res) => {
     try {
       const { name, id } = req.body;
-      await TypeProduct.findOneAndUpdate({ _id: id }, { name });
-      res.json({ message: " Update a type product" });
+      const typeProduct = await TypeProduct.findOneAndUpdate(
+        { _id: id },
+        { name },
+        { new: true }
+      );
+      res.json({ typeProduct: typeProduct, message: " Update successfully!" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

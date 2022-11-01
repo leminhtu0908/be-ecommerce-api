@@ -41,8 +41,12 @@ const BrandCtrl = {
   updateBrand: async (req, res) => {
     try {
       const { name, id } = req.body;
-      await Brand.findOneAndUpdate({ _id: id }, { name });
-      res.json({ message: " Update successfully!" });
+      const brand = await Brand.findOneAndUpdate(
+        { _id: id },
+        { name },
+        { new: true }
+      );
+      res.json({ brand: brand, message: " Update successfully!" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

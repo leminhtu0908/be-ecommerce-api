@@ -43,8 +43,12 @@ const CategoryCtrl = {
   updateCategory: async (req, res) => {
     try {
       const { name, id } = req.body;
-      await Category.findOneAndUpdate({ _id: id }, { name });
-      res.json({ message: " Update a Category" });
+      const categoryUpdate = await Category.findOneAndUpdate(
+        { _id: id },
+        { name },
+        { new: true }
+      );
+      res.json({ category: categoryUpdate, message: " Update Successfully" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

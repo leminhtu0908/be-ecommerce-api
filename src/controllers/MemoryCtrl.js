@@ -13,20 +13,19 @@ const MemoryCtrl = {
     try {
       const { name } = req.body;
       const memory = await Memory.findOne({ name });
-      if (memory)
-        return res.status(400).json({ message: "This memory already exists." });
+      if (memory) return res.status(400).send("This memory already exists.");
       const newMemory = await Memory({ name });
       await newMemory.save();
-      res.json({ memory: newMemory, message: "Created a memory" });
+      res.json({ memory: newMemory, message: "Created successfully!" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
   },
   deleteMemory: async (req, res) => {
     try {
-      const { id } = req.body;
+      const { id } = req.params;
       await Memory.findByIdAndRemove(id);
-      res.json({ message: " Deleted a memory" });
+      res.json({ message: " Deleted successfully!" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
@@ -34,8 +33,12 @@ const MemoryCtrl = {
   updateMemory: async (req, res) => {
     try {
       const { name, id } = req.body;
-      await Memory.findOneAndUpdate({ _id: id }, { name });
-      res.json({ message: " Update a memory" });
+      const memory = await Memory.findOneAndUpdate(
+        { _id: id },
+        { name },
+        { new: true }
+      );
+      res.json({ memory: memory, message: " Update successfully!" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

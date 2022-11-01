@@ -24,8 +24,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use("/api", routes);
 const httpServer = createServer(app);
-// //chat message
-// socket(httpServer);
 
 const PORT = process.env.PORT || process.env.API_PORT;
 httpServer.listen({ port: PORT }, () => {
