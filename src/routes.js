@@ -50,6 +50,7 @@ router.delete(
   CategoryCtrl.deleteCategory
 );
 router.put("/category/update", checkIfAdmin, CategoryCtrl.updateCategory);
+router.post("/category/search", checkIfAdmin, CategoryCtrl.searchCategory);
 
 /*
  *Brand

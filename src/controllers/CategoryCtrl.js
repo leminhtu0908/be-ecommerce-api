@@ -53,6 +53,11 @@ const CategoryCtrl = {
       return res.status(500).json({ message: error.message });
     }
   },
+  searchCategory: async (req, res) => {
+    const { name } = req.query;
+    const data = await Category.find({ name });
+    res.send(data);
+  },
 };
 
 module.exports = { CategoryCtrl };
