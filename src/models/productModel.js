@@ -39,13 +39,45 @@ const productSchema = new mongoose.Schema(
       type: String,
     },
     sold: { type: Number, default: 0 },
-    productDetail: {
-      type: Schema.Types.ObjectId,
-      ref: "ProductDetail",
+    title: {
+      type: String,
     },
-    description: {
-      type: Object,
-      default: {},
+    content: { type: String },
+    heDieuHanh: {
+      type: String,
+    },
+    camera_truoc: {
+      type: String,
+    },
+    camera_sau: {
+      type: String,
+    },
+    chip: {
+      type: String,
+    },
+    ram: {
+      type: String,
+    },
+    dungluongluutru: {
+      type: String,
+    },
+    sim: {
+      type: String,
+    },
+    pin_sac: {
+      type: String,
+    },
+    thietke: {
+      type: String,
+    },
+    chatlieu: {
+      type: String,
+    },
+    kichthuoc_khoiluong: {
+      type: String,
+    },
+    thoidiemramat: {
+      type: String,
     },
     status: {
       type: Boolean,

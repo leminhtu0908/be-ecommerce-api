@@ -67,10 +67,6 @@ const ProductCtrl = {
             path: "typeProduct",
             select: "-products",
           },
-          {
-            path: "description",
-            select: "-product",
-          },
         ]),
         req.query
       )
@@ -221,6 +217,7 @@ const ProductCtrl = {
         category_id,
         brand_id,
         typeProduct_id,
+        title,
       } = parserData;
       const file = req.file;
       if (imageToDeletePublicId) {
@@ -255,6 +252,7 @@ const ProductCtrl = {
         category_id,
         brand_id,
         typeProduct_id,
+        title,
       };
       await Product.findOneAndUpdate(
         { _id: id },

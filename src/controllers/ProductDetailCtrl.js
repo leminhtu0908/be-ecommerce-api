@@ -46,12 +46,12 @@ const ProductDetailCtrl = {
         product: product,
       };
       const newProductDetailDB = await new ProductDetail(newDetail).save();
-      await Product.findOneAndUpdate(
-        { _id: product._id },
-        {
-          description: newProductDetailDB,
-        }
-      );
+      // await Product.findOneAndUpdate(
+      //   { _id: product._id },
+      //   {
+      //     description: newProductDetailDB,
+      //   }
+      // );
       await newProductDetailDB.populate("product");
       res.json({
         detail: newProductDetailDB,
