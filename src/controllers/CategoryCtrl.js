@@ -1,5 +1,4 @@
 const Category = require("../models/categoryModel");
-const Product = require("../models/productModel");
 const CategoryCtrl = {
   getAllCategories: async (req, res) => {
     try {
@@ -55,8 +54,27 @@ const CategoryCtrl = {
   },
   searchCategory: async (req, res) => {
     const { name } = req.query;
-    const data = await Category.find({ name });
-    res.send(data);
+    const perPage = req.params.perPage || 10;
+    const page = req.params.page || 1;
+    if (name === "") {
+      // let query = Category.find({ name }).sort({ _id: -1 });
+      // let data = await query.limit(perPage).skip((page - 1) * perPage);
+      // const totalDocuments = await query.countDocuments();
+      // const totalPage = Math.ceil(totalDocuments / perPage);
+      // res.send(data, {
+      //   page,
+      //   perPage,
+      //   totalPage,
+      //   totalDocuments,
+      // });
+      const data = await Category.find().sort({ createdAt: -1 });
+      res.send(data);
+    } else {
+      const data = await Category.find({
+        name: { $regex: name, $options: "$i" },
+      });
+      res.send(data);
+    }
   },
 };
 
