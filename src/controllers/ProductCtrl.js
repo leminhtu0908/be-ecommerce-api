@@ -98,6 +98,8 @@ const ProductCtrl = {
         category_id,
         brand_id,
         typeProduct_id,
+        soluong_sanpham,
+        content,
       } = parserData;
       const file = req.file;
       let imageUrl;
@@ -112,22 +114,23 @@ const ProductCtrl = {
       }
 
       const product = await Product.findOne({ product_id });
-      if (product)
-        return res
-          .status(400)
-          .json({ message: "This product already exists." });
+      if (product) return res.status(400).send("Mã sản phẩm đã tồn tại");
+      const priceConvert = Number(price);
+      const soluong_sanphamConvert = Number(soluong_sanpham);
       const newProductAndCategory = {
         name,
         product_id,
-        price,
+        price: priceConvert,
         display,
         memorys,
         colors,
+        content,
         image: imageUrl,
         imagePublicId: imagePublicId,
         brand: brand_id,
         category: category_id,
         typeProduct: typeProduct_id,
+        soluong_sanpham: soluong_sanphamConvert,
       };
       const addProduct = await new Product(newProductAndCategory).save();
       await addProduct.populate([
@@ -166,7 +169,7 @@ const ProductCtrl = {
         message: "Created a product successfully",
       });
     } catch (error) {
-      return res.status(500).json({ msg: error.message });
+      return res.status(500).json({ message: error.message });
     }
   },
   deleteProduct: async (req, res) => {
@@ -217,7 +220,9 @@ const ProductCtrl = {
         category_id,
         brand_id,
         typeProduct_id,
-        title,
+        soluong_sanpham,
+        content,
+        ...field
       } = parserData;
       const file = req.file;
       if (imageToDeletePublicId) {
@@ -243,16 +248,20 @@ const ProductCtrl = {
         imageUrl = uploadImage.secure_url;
         imagePublicId = uploadImage.public_id;
       }
+      const priceConvert = Number(price);
+      const soluong_sanphamConvert = Number(soluong_sanpham);
       const cloneProduct = {
         name,
-        price,
+        price: priceConvert,
         memorys,
         display,
         colors,
         category_id,
         brand_id,
         typeProduct_id,
-        title,
+        soluong_sanpham: soluong_sanphamConvert,
+        content,
+        ...field,
       };
       await Product.findOneAndUpdate(
         { _id: id },

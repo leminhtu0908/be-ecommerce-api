@@ -140,7 +140,7 @@ router.post(
   [checkIfAdmin, multerUpload.single("image")],
   ProductCtrl.createProduct
 );
-router.delete("/product/delete", checkIfAdmin, ProductCtrl.deleteProduct);
+router.post("/product/delete", checkIfAdmin, ProductCtrl.deleteProduct);
 router.put(
   "/product/update",
   [checkIfAdmin, multerUpload.single("image")],
