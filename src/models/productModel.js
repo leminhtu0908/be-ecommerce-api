@@ -79,6 +79,11 @@ const productSchema = new mongoose.Schema(
     thoidiemramat: {
       type: String,
     },
+    soluong_sanpham: {
+      type: Number,
+      default: 0,
+    },
+
     status: {
       type: Boolean,
       default: true,
