@@ -263,12 +263,12 @@ const ProductCtrl = {
         content,
         ...field,
       };
-      await Product.findOneAndUpdate(
+      const product = await Product.findOneAndUpdate(
         { _id: id },
         { ...cloneProduct, image: imageUrl, imagePublicId: imagePublicId },
         { new: true }
       );
-      res.json({ message: " Update Product Successfully" });
+      res.json({ product: product, message: " Update Product Successfully" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
