@@ -8,6 +8,19 @@ const CategoryCtrl = {
       return res.status(500).json({ message: error.message });
     }
   },
+  getCategory: async (req, res) => {
+    try {
+      const { name } = req.query;
+      const categories = await Category.findOne({
+        $text: {
+          $search: name,
+        },
+      });
+      res.json(categories);
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
   createCategory: async (req, res) => {
     try {
       const { name } = req.body;

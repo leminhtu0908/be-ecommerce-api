@@ -80,7 +80,45 @@ const ProductCtrl = {
         products: products,
       });
     } catch (error) {
-      return res.status(500).json({ msg: error.message });
+      return res.status(500).json({ message: error.message });
+    }
+  },
+  getAllProductByCategory: async (req, res) => {
+    try {
+      const { product_id } = req.query;
+      const features = new APIfeatures(
+        Product.findOne({ product_id }).populate([
+          {
+            path: "memorys",
+            select: "-products",
+          },
+          { path: "category", select: "-products" },
+          {
+            path: "brand",
+            select: "-products",
+          },
+          {
+            path: "colors",
+            select: "-products",
+          },
+          {
+            path: "typeProduct",
+            select: "-products",
+          },
+        ]),
+        req.query
+      )
+        .filtering()
+        .sorting()
+        .paginating();
+      const products = await features.query;
+      res.json({
+        status: "success",
+        results: products.length,
+        products: products,
+      });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
     }
   },
   createProduct: async (req, res) => {

@@ -43,6 +43,7 @@ router.post(
  *Category
  */
 router.get("/category/all", CategoryCtrl.getAllCategories);
+router.get("/category/findOne", CategoryCtrl.getCategory);
 router.post("/category/create", checkIfAdmin, CategoryCtrl.createCategory);
 router.delete(
   "/category/delete/:id",
@@ -135,6 +136,7 @@ router.put(
  *Product
  */
 router.get("/product", ProductCtrl.getAllProduct);
+router.get("/product/bydanhmuc", ProductCtrl.getAllProductByCategory);
 router.post(
   "/product/create",
   [checkIfAdmin, multerUpload.single("image")],
