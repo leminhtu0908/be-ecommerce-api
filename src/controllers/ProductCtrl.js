@@ -83,11 +83,69 @@ const ProductCtrl = {
       return res.status(500).json({ message: error.message });
     }
   },
-  getAllProductByCategory: async (req, res) => {
+  getAllProductByName: async (req, res) => {
+    try {
+      const { name } = req.query;
+      if (name === "") {
+        const products = await Product.find()
+          .populate([
+            {
+              path: "memorys",
+              select: "-products",
+            },
+            { path: "category", select: "-products" },
+            {
+              path: "brand",
+              select: "-products",
+            },
+            {
+              path: "colors",
+              select: "-products",
+            },
+            {
+              path: "typeProduct",
+              select: "-products",
+            },
+          ])
+          .sort({ createdAt: -1 });
+        res.send({ products: products });
+      } else {
+        const products = await Product.find({
+          name: { $regex: name, $options: "$i" },
+        })
+          .populate([
+            {
+              path: "memorys",
+              select: "-products",
+            },
+            { path: "category", select: "-products" },
+            {
+              path: "brand",
+              select: "-products",
+            },
+            {
+              path: "colors",
+              select: "-products",
+            },
+            {
+              path: "typeProduct",
+              select: "-products",
+            },
+          ])
+          .sort({ createdAt: -1 });
+        res.send({ products: products });
+      }
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
+  getDetailProduct: async (req, res) => {
     try {
       const { product_id } = req.query;
-      const features = new APIfeatures(
-        Product.findOne({ product_id }).populate([
+      const products = await Product.findOne({
+        product_id,
+      })
+        .populate([
           {
             path: "memorys",
             select: "-products",
@@ -105,18 +163,9 @@ const ProductCtrl = {
             path: "typeProduct",
             select: "-products",
           },
-        ]),
-        req.query
-      )
-        .filtering()
-        .sorting()
-        .paginating();
-      const products = await features.query;
-      res.json({
-        status: "success",
-        results: products.length,
-        products: products,
-      });
+        ])
+        .sort({ createdAt: -1 });
+      res.send({ products: products });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

@@ -136,7 +136,8 @@ router.put(
  *Product
  */
 router.get("/product", ProductCtrl.getAllProduct);
-router.get("/product/bydanhmuc", ProductCtrl.getAllProductByCategory);
+router.get("/product/detail", ProductCtrl.getDetailProduct);
+router.get("/product/byname", ProductCtrl.getAllProductByName);
 router.post(
   "/product/create",
   [checkIfAdmin, multerUpload.single("image")],
