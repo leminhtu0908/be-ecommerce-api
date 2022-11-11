@@ -65,7 +65,7 @@ const UserCtrl = {
         },
         fieldsToUpdate
       );
-      return res.json(updatedUser);
+      return res.json({ user: updatedUser, message: "Lưu ảnh thành công" });
     }
     return res
       .status(500)
