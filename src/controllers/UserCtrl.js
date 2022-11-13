@@ -73,13 +73,21 @@ const UserCtrl = {
   },
   updateUser: async (req, res) => {
     try {
-      const { fullName, email, id, dateofbirth, address, gender, nickName } =
-        req.body;
-      await User.findOneAndUpdate(
-        { _id: id },
-        { fullName, email, dateofbirth, address, gender, nickName }
+      const {
+        fullName,
+        email,
+        _id,
+        dateofbirth,
+        address,
+        phone,
+        gender,
+        nickName,
+      } = req.body;
+      const userUpdate = await User.findOneAndUpdate(
+        { _id: _id },
+        { fullName, email, dateofbirth, address, gender, phone, nickName }
       );
-      res.json({ message: " Update user successfully" });
+      res.json({ user: userUpdate, message: " Update user successfully" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

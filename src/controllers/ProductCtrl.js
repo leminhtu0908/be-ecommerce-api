@@ -54,10 +54,10 @@ const ProductCtrl = {
             path: "memorys",
             select: "-products",
           },
-          { path: "category", select: "-products" },
+          { path: "category", select: "name" },
           {
             path: "brand",
-            select: "-products",
+            select: "name",
           },
           {
             path: "colors",
@@ -85,7 +85,7 @@ const ProductCtrl = {
   },
   getAllProductByName: async (req, res) => {
     try {
-      const { name } = req.query;
+      const { name, category } = req.query;
       if (name === "") {
         const products = await Product.find()
           .populate([
@@ -110,9 +110,12 @@ const ProductCtrl = {
           .sort({ createdAt: -1 });
         res.send({ products: products });
       } else {
-        const products = await Product.find({
-          name: { $regex: name, $options: "$i" },
-        })
+        const products = await Product.find(
+          {
+            name: { $regex: name, $options: "$i" },
+          },
+          { category: category.name }
+        )
           .populate([
             {
               path: "memorys",
