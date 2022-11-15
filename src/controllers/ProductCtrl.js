@@ -11,8 +11,8 @@ const ProductDetail = require("../models/productDetailModel");
 //Filter, sorting and pagination
 class APIfeatures {
   constructor(query, queryString) {
-    this.query = query;
-    this.queryString = queryString;
+    this.query = query || "";
+    this.queryString = queryString || "";
   }
   filtering() {
     const queryObj = { ...this.queryString }; // queryString = req.query
@@ -47,45 +47,106 @@ class APIfeatures {
 
 const ProductCtrl = {
   getAllProduct: async (req, res) => {
+    // try {
+    //   const features = new APIfeatures(
+    //     Product.find().populate([
+    //       {
+    //         path: "memorys",
+    //         select: "-products",
+    //       },
+    //       { path: "category", select: "name" },
+    //       {
+    //         path: "brand",
+    //         select: "name",
+    //       },
+    //       {
+    //         path: "colors",
+    //         select: "-products",
+    //       },
+    //       {
+    //         path: "typeProduct",
+    //         select: "-products",
+    //       },
+    //     ]),
+    //     req.query
+    //   )
+    //     .filtering()
+    //     .sorting()
+    //     .paginating();
+    //   const products = await features.query;
+    //   res.json({
+    //     status: "success",
+    //     results: products.length,
+    //     products: products,
+    //   });
+    // } catch (error) {
+    //   return res.status(500).json({ message: error.message });
+    // }
     try {
-      const features = new APIfeatures(
-        Product.find().populate([
-          {
-            path: "memorys",
-            select: "-products",
-          },
-          { path: "category", select: "name" },
-          {
-            path: "brand",
-            select: "name",
-          },
-          {
-            path: "colors",
-            select: "-products",
-          },
-          {
-            path: "typeProduct",
-            select: "-products",
-          },
-        ]),
-        req.query
-      )
-        .filtering()
-        .sorting()
-        .paginating();
-      const products = await features.query;
-      res.json({
-        status: "success",
-        results: products.length,
-        products: products,
-      });
+      const { name, display, ram, pin_sac } = req.query;
+      if (name === "" && display === "" && ram === "" && pin_sac === "") {
+        const products = await Product.find()
+          .populate([
+            {
+              path: "memorys",
+              select: "-products",
+            },
+            { path: "category", select: "-products" },
+            {
+              path: "brand",
+              select: "-products",
+            },
+            {
+              path: "colors",
+              select: "-products",
+            },
+            {
+              path: "typeProduct",
+              select: "-products",
+            },
+          ])
+          .sort({ createdAt: -1 });
+        res.send({ products: products });
+      } else {
+        const products = await Product.find({
+          name: { $regex: name, $options: "$i" },
+          display: { $regex: display, $options: "$i" },
+          ram: { $regex: ram, $options: "$i" },
+          pin_sac: { $regex: pin_sac, $options: "$i" },
+          // "typeProduct.name": typeProduct,
+          // memorys: {
+          //   $elemMatch: { name: { $regex: memorys, $options: "$i" } },
+          // },
+        })
+          .populate([
+            {
+              path: "memorys",
+              select: "-products",
+            },
+            { path: "category", select: "-products" },
+            {
+              path: "brand",
+              select: "-products",
+            },
+            {
+              path: "colors",
+              select: "-products",
+            },
+            {
+              path: "typeProduct",
+              select: "-products",
+            },
+          ])
+          .sort({ createdAt: -1 });
+        res.send({ products: products });
+      }
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
   },
   getAllProductByName: async (req, res) => {
     try {
-      const { name, category } = req.query;
+      const { name } = req.query;
       if (name === "") {
         const products = await Product.find()
           .populate([
@@ -110,12 +171,9 @@ const ProductCtrl = {
           .sort({ createdAt: -1 });
         res.send({ products: products });
       } else {
-        const products = await Product.find(
-          {
-            name: { $regex: name, $options: "$i" },
-          },
-          { category: category.name }
-        )
+        const products = await Product.find({
+          name: { $regex: name, $options: "$i" },
+        })
           .populate([
             {
               path: "memorys",
