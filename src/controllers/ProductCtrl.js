@@ -84,7 +84,14 @@ const ProductCtrl = {
     // }
     try {
       const { name, display, ram, pin_sac } = req.query;
-      if (name === "" && display === "" && ram === "" && pin_sac === "") {
+      if (
+        name === "" &&
+        display === "" &&
+        ram === "" &&
+        pin_sac === ""
+        // &&
+        // typeProduct === ""
+      ) {
         const products = await Product.find()
           .populate([
             {
