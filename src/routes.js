@@ -7,6 +7,7 @@ const ColorCtrl = require("./controllers/ColorCtrl");
 const ImageCtrl = require("./controllers/ImageCtrl");
 const MemoryCtrl = require("./controllers/MemoryCtrl");
 const NewCtrl = require("./controllers/NewCtrl");
+const PaymentController = require("./controllers/PaymentController");
 const ProductCtrl = require("./controllers/ProductCtrl");
 const ProductDetailCtrl = require("./controllers/ProductDetailCtrl");
 const TypeProductCtrl = require("./controllers/TypeProductCtrl");
@@ -164,4 +165,7 @@ router.put(
   checkIfAdmin,
   ProductDetailCtrl.updateProductDetail
 );
+
+/* Payment */
+router.get("/payment", PaymentController.getZaloPay);
 module.exports = router;
