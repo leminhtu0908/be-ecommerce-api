@@ -7,7 +7,7 @@ const {
 const NewCtrl = {
   getAllNew: async (req, res) => {
     try {
-      const news = await New.find();
+      const news = await New.find().sort({ createdAt: -1 });
       res.send(news);
     } catch (error) {
       return res.status(500).json({ message: error.message });

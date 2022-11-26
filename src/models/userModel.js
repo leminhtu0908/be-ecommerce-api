@@ -63,6 +63,7 @@ const userSchema = new mongoose.Schema(
     },
     coverImage: String,
     coverImagePublicId: String,
+    order: [],
   },
   {
     timestamps: true,

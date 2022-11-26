@@ -167,5 +167,15 @@ router.put(
 );
 
 /* Payment */
-router.get("/payment", PaymentController.getZaloPay);
+router.post("/payment/zalopay", checkIfUser, PaymentController.getZaloPay);
+router.post("/payment/cash", checkIfUser, PaymentController.createOrder);
+router.get("/order/all", PaymentController.getAllOrder);
+router.get("/order/by-user", PaymentController.getAllOrderByUser);
+router.put("/order/update-status", PaymentController.updateStatusOrder);
+router.get("/order/export-excel", checkIfAdmin, PaymentController.ExportExCel);
+router.post(
+  "/order/delete",
+  checkIfUser,
+  PaymentController.deleteOrderWaitingAllow
+);
 module.exports = router;

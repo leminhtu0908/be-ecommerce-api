@@ -83,21 +83,28 @@ const ProductCtrl = {
     //   return res.status(500).json({ message: error.message });
     // }
     try {
-      const { name, display, ram, pin_sac } = req.query;
+      const {
+        name,
+        display,
+        ram,
+        pin_sac,
+        price,
+        brand,
+        dung_luong_luu_tru,
+        typeProduct,
+      } = req.query;
       if (
         name === "" &&
         display === "" &&
         ram === "" &&
-        pin_sac === ""
-        // &&
-        // typeProduct === ""
+        pin_sac === "" &&
+        price === "" &&
+        dung_luong_luu_tru === "" &&
+        typeProduct === "" &&
+        brand === ""
       ) {
         const products = await Product.find()
           .populate([
-            {
-              path: "memorys",
-              select: "-products",
-            },
             { path: "category", select: "-products" },
             {
               path: "brand",
@@ -114,22 +121,115 @@ const ProductCtrl = {
           ])
           .sort({ createdAt: -1 });
         res.send({ products: products });
+      } else if (brand !== "") {
+        const products = await Product.find({})
+          .populate([
+            { path: "category", select: "-products" },
+            {
+              path: "brand",
+              select: "-products",
+            },
+            {
+              path: "colors",
+              select: "-products",
+            },
+            {
+              path: "typeProduct",
+              select: "-products",
+            },
+          ])
+          .sort(price === "Giá từ cao đến thấp" ? { price: -1 } : { price: 1 });
+        const arrProduct = products?.filter(
+          (item) => item.brand.name === brand
+        );
+        res.send({ products: arrProduct });
+      } else if (typeProduct !== "") {
+        const products = await Product.find()
+          .populate([
+            { path: "category", select: "-products" },
+            {
+              path: "brand",
+              select: "-products",
+            },
+            {
+              path: "colors",
+              select: "-products",
+            },
+            {
+              path: "typeProduct",
+              select: "-products",
+            },
+          ])
+          .sort(price === "Giá từ cao đến thấp" ? { price: -1 } : { price: 1 });
+        const arrProduct = products?.filter(
+          (item) => item.typeProduct.name === typeProduct
+        );
+        res.send({ products: arrProduct });
+      } else if (price !== "") {
+        if (
+          price === "Giá từ cao đến thấp" ||
+          price === "Giá từ thấp đến cao"
+        ) {
+          const products = await Product.find({})
+            .populate([
+              { path: "category", select: "-products" },
+              {
+                path: "brand",
+                select: "-products",
+              },
+              {
+                path: "colors",
+                select: "-products",
+              },
+              {
+                path: "typeProduct",
+                select: "-products",
+              },
+            ])
+            .sort(
+              price === "Giá từ cao đến thấp" ? { price: -1 } : { price: 1 }
+            );
+          res.send({ products: products });
+        } else {
+          const products = await Product.find({
+            price:
+              price === "Dưới 5 triệu"
+                ? { $lte: 5000000 }
+                : price === "Từ 5 - 10 triệu"
+                ? { $gte: 5000000, $lte: 10000000 }
+                : price === "Từ 10 - 20 triệu"
+                ? { $gte: 10000000, $lte: 20000000 }
+                : price === "Trên 20 triệu"
+                ? { $gte: 20000000 }
+                : null,
+          })
+            .populate([
+              { path: "category", select: "-products" },
+              {
+                path: "brand",
+                select: "-products",
+              },
+              {
+                path: "colors",
+                select: "-products",
+              },
+              {
+                path: "typeProduct",
+                select: "-products",
+              },
+            ])
+            .sort({ createdAt: -1 });
+          res.send({ products: products });
+        }
       } else {
         const products = await Product.find({
           name: { $regex: name, $options: "$i" },
           display: { $regex: display, $options: "$i" },
           ram: { $regex: ram, $options: "$i" },
           pin_sac: { $regex: pin_sac, $options: "$i" },
-          // "typeProduct.name": typeProduct,
-          // memorys: {
-          //   $elemMatch: { name: { $regex: memorys, $options: "$i" } },
-          // },
+          dungluongluutru: { $regex: dung_luong_luu_tru, $options: "$i" },
         })
           .populate([
-            {
-              path: "memorys",
-              select: "-products",
-            },
             { path: "category", select: "-products" },
             {
               path: "brand",
@@ -157,10 +257,6 @@ const ProductCtrl = {
       if (name === "") {
         const products = await Product.find()
           .populate([
-            {
-              path: "memorys",
-              select: "-products",
-            },
             { path: "category", select: "-products" },
             {
               path: "brand",
@@ -182,10 +278,6 @@ const ProductCtrl = {
           name: { $regex: name, $options: "$i" },
         })
           .populate([
-            {
-              path: "memorys",
-              select: "-products",
-            },
             { path: "category", select: "-products" },
             {
               path: "brand",
@@ -214,10 +306,6 @@ const ProductCtrl = {
         product_id,
       })
         .populate([
-          {
-            path: "memorys",
-            select: "-products",
-          },
           { path: "category", select: "-products" },
           {
             path: "brand",
@@ -247,7 +335,7 @@ const ProductCtrl = {
         product_id,
         name,
         price,
-        memorys,
+        memory,
         display,
         colors,
         category_id,
@@ -277,7 +365,7 @@ const ProductCtrl = {
         product_id,
         price: priceConvert,
         display,
-        memorys,
+        memory,
         colors,
         content,
         image: imageUrl,
@@ -290,10 +378,6 @@ const ProductCtrl = {
       const addProduct = await new Product(newProductAndCategory).save();
       await addProduct.populate([
         { path: "category", select: "-products" },
-        {
-          path: "memorys",
-          select: "-products",
-        },
         {
           path: "colors",
           select: "-products",
@@ -369,7 +453,7 @@ const ProductCtrl = {
         imageToDeletePublicId,
         name,
         price,
-        memorys,
+        memory,
         display,
         colors,
         category_id,
@@ -408,12 +492,12 @@ const ProductCtrl = {
       const cloneProduct = {
         name,
         price: priceConvert,
-        memorys,
+        memory,
         display,
         colors,
-        category_id,
-        brand_id,
-        typeProduct_id,
+        category: category_id,
+        brand: brand_id,
+        typeProduct: typeProduct_id,
         soluong_sanpham: soluong_sanphamConvert,
         content,
         ...field,

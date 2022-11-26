@@ -12,12 +12,15 @@ const productSchema = new mongoose.Schema(
       type: Schema.Types.ObjectId,
       ref: "Category",
     },
-    memorys: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Memory",
-      },
-    ],
+    // memorys: [
+    //   {
+    //     type: Schema.Types.ObjectId,
+    //     ref: "Memory",
+    //   },
+    // ],
+    memory: {
+      type: String,
+    },
     colors: [
       {
         type: Schema.Types.ObjectId,
@@ -83,7 +86,13 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-
+    discount: {
+      type: String,
+    },
+    stocking: {
+      type: Boolean,
+      default: true,
+    },
     status: {
       type: Boolean,
       default: true,
