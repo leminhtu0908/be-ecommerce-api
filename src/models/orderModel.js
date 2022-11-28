@@ -41,6 +41,10 @@ const orderSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    visited: {
+      type: Boolean,
+      default: false,
+    },
     user: {
       type: Schema.Types.ObjectId,
       ref: "User",

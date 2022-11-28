@@ -155,19 +155,58 @@ const PaymentController = {
       return res.status(500).json({ message: error.message });
     }
   },
+  createOrderVisited: async (req, res) => {
+    try {
+      const {
+        order_id,
+        tinh,
+        huyen,
+        name,
+        email,
+        phone,
+        sonha,
+        xa,
+        product_total,
+        price_total,
+        cart,
+        status,
+      } = req.body;
+      const address = `${sonha},${xa}, ${huyen}, ${tinh}`;
+      const { memory, colors } = cart;
+
+      const productNameOrder = `${name} - ${memory} - ${colors}`;
+      const cloneValues = {
+        order_id: order_id,
+        productNameOrder: productNameOrder,
+        fullName: name,
+        phone: phone,
+        email: email,
+        address: address,
+        total_product: product_total,
+        total_price: price_total,
+        allow_status: status,
+        visited: true,
+      };
+      const newOrder = new Order(cloneValues);
+      await newOrder.save();
+      res.json({ newOrder: newOrder, status: "success" });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
   updateStatusOrder: async (req, res) => {
     try {
-      const { allow_status, id, user_id } = req.body;
-      await User.findOneAndUpdate(
-        { _id: user_id },
-        {
-          $set: { "order.$[elem].allow_status": allow_status },
-        },
-        {
-          arrayFilters: [{ "elem.order": { allow_status: allow_status } }],
-          new: true,
-        }
-      );
+      const { allow_status, id } = req.body;
+      // await User.findOneAndUpdate(
+      //   { _id: user_id },
+      //   {
+      //     $set: { "order.$[elem].allow_status": allow_status },
+      //   },
+      //   {
+      //     arrayFilters: [{ "elem.order": { allow_status: allow_status } }],
+      //     new: true,
+      //   }
+      // );
       const orderUpdate = await Order.findOneAndUpdate(
         { _id: id },
         { allow_status },
