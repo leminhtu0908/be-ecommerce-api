@@ -299,6 +299,79 @@ const ProductCtrl = {
       return res.status(500).json({ message: error.message });
     }
   },
+  getProductsPanigate: async (req, res) => {
+    try {
+      const { name } = req.query;
+      let perPage = req.query.per_page || 10; // số lượng sản phẩm xuất hiện trên 1 page
+      let page = req.query.current_page || 0;
+      if (name === "") {
+        Product.find()
+          .populate([
+            { path: "category", select: "-products" },
+            {
+              path: "brand",
+              select: "-products",
+            },
+            {
+              path: "colors",
+              select: "-products",
+            },
+            {
+              path: "typeProduct",
+              select: "-products",
+            },
+          ])
+          .skip(perPage * page - perPage) // Trong page đầu tiên sẽ bỏ qua giá trị là 0
+          .limit(perPage)
+          .exec((err, product) => {
+            Product.countDocuments((err, count) => {
+              if (err) return next(err);
+              res.send({
+                products: product,
+                size: perPage,
+                totalElements: count,
+                totalPages: Math.ceil(count / perPage),
+              }); // Trả về dữ liệu các sản phẩm theo định dạng như JSON, XML,...
+            });
+          });
+      } else {
+        Product.find({
+          name: { $regex: name, $options: "$i" },
+        })
+          .populate([
+            { path: "category", select: "-products" },
+            {
+              path: "brand",
+              select: "-products",
+            },
+            {
+              path: "colors",
+              select: "-products",
+            },
+            {
+              path: "typeProduct",
+              select: "-products",
+            },
+          ])
+          .sort({ createdAt: -1 })
+          .skip(perPage * page - perPage) // Trong page đầu tiên sẽ bỏ qua giá trị là 0
+          .limit(perPage)
+          .exec((err, product) => {
+            Product.countDocuments((err, count) => {
+              if (err) return next(err);
+              res.send({
+                products: product,
+                size: perPage,
+                totalElements: count,
+                totalPages: Math.ceil(count / perPage),
+              }); // Trả về dữ liệu các sản phẩm theo định dạng như JSON, XML,...
+            });
+          });
+      }
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
   getDetailProduct: async (req, res) => {
     try {
       const { product_id } = req.query;

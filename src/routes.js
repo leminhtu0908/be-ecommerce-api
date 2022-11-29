@@ -84,6 +84,7 @@ router.put(
  *Color
  */
 router.get("/color/all", ColorCtrl.getAllColor);
+router.get("/colors", ColorCtrl.getColors);
 router.post("/color/create", checkIfAdmin, ColorCtrl.createColor);
 router.delete("/color/delete/:id", checkIfAdmin, ColorCtrl.deleteColor);
 router.put("/color/update", checkIfAdmin, ColorCtrl.updateColor);
@@ -139,6 +140,7 @@ router.put(
 router.get("/product", ProductCtrl.getAllProduct);
 router.get("/product/detail", ProductCtrl.getDetailProduct);
 router.get("/product/byname", ProductCtrl.getAllProductByName);
+router.get("/product/byname-and-panigate", ProductCtrl.getProductsPanigate);
 router.post(
   "/product/create",
   [checkIfAdmin, multerUpload.single("image")],
