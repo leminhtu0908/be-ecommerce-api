@@ -111,6 +111,9 @@ const ProductCtrl = {
               select: "-products",
             },
             {
+              path: "imageMulti",
+            },
+            {
               path: "colors",
               select: "-products",
             },
@@ -128,6 +131,9 @@ const ProductCtrl = {
             {
               path: "brand",
               select: "-products",
+            },
+            {
+              path: "imageMulti",
             },
             {
               path: "colors",
@@ -150,6 +156,9 @@ const ProductCtrl = {
             {
               path: "brand",
               select: "-products",
+            },
+            {
+              path: "imageMulti",
             },
             {
               path: "colors",
@@ -210,6 +219,9 @@ const ProductCtrl = {
                 select: "-products",
               },
               {
+                path: "imageMulti",
+              },
+              {
                 path: "colors",
                 select: "-products",
               },
@@ -234,6 +246,9 @@ const ProductCtrl = {
             {
               path: "brand",
               select: "-products",
+            },
+            {
+              path: "imageMulti",
             },
             {
               path: "colors",
@@ -263,6 +278,9 @@ const ProductCtrl = {
               select: "-products",
             },
             {
+              path: "imageMulti",
+            },
+            {
               path: "colors",
               select: "-products",
             },
@@ -282,6 +300,9 @@ const ProductCtrl = {
             {
               path: "brand",
               select: "-products",
+            },
+            {
+              path: "imageMulti",
             },
             {
               path: "colors",
@@ -313,6 +334,9 @@ const ProductCtrl = {
               select: "-products",
             },
             {
+              path: "imageMulti",
+            },
+            {
               path: "colors",
               select: "-products",
             },
@@ -323,6 +347,7 @@ const ProductCtrl = {
           ])
           .skip(perPage * page - perPage) // Trong page đầu tiên sẽ bỏ qua giá trị là 0
           .limit(perPage)
+          .sort({ createdAt: -1 })
           .exec((err, product) => {
             Product.countDocuments((err, count) => {
               if (err) return next(err);
@@ -345,6 +370,10 @@ const ProductCtrl = {
               select: "-products",
             },
             {
+              path: "imageMulti",
+              select: "-products",
+            },
+            {
               path: "colors",
               select: "-products",
             },
@@ -353,9 +382,10 @@ const ProductCtrl = {
               select: "-products",
             },
           ])
-          .sort({ createdAt: -1 })
+
           .skip(perPage * page - perPage) // Trong page đầu tiên sẽ bỏ qua giá trị là 0
           .limit(perPage)
+          .sort({ createdAt: -1 })
           .exec((err, product) => {
             Product.countDocuments((err, count) => {
               if (err) return next(err);
@@ -385,6 +415,9 @@ const ProductCtrl = {
             select: "-products",
           },
           {
+            path: "imageMulti",
+          },
+          {
             path: "colors",
             select: "-products",
           },
@@ -409,12 +442,14 @@ const ProductCtrl = {
         name,
         price,
         memory,
+        imageMulti,
         display,
         colors,
         category_id,
         brand_id,
         typeProduct_id,
         soluong_sanpham,
+        discount,
         content,
       } = parserData;
       const file = req.file;
@@ -433,6 +468,10 @@ const ProductCtrl = {
       if (product) return res.status(400).send("Mã sản phẩm đã tồn tại");
       const priceConvert = Number(price);
       const soluong_sanphamConvert = Number(soluong_sanpham);
+      const convertDiscount = Number(discount);
+      const price_discount = Math.ceil(
+        priceConvert * ((100 - convertDiscount) / 100)
+      );
       const newProductAndCategory = {
         name,
         product_id,
@@ -440,6 +479,7 @@ const ProductCtrl = {
         display,
         memory,
         colors,
+        imageMulti,
         content,
         image: imageUrl,
         imagePublicId: imagePublicId,
@@ -447,6 +487,8 @@ const ProductCtrl = {
         category: category_id,
         typeProduct: typeProduct_id,
         soluong_sanpham: soluong_sanphamConvert,
+        discount: convertDiscount,
+        price_discount: price_discount,
       };
       const addProduct = await new Product(newProductAndCategory).save();
       await addProduct.populate([
@@ -454,6 +496,9 @@ const ProductCtrl = {
         {
           path: "colors",
           select: "-products",
+        },
+        {
+          path: "image",
         },
         {
           path: "brand",
@@ -512,7 +557,7 @@ const ProductCtrl = {
       await typeProduct.save();
       await ProductDetail.findOneAndRemove(product?.description?._id);
       await Product.findByIdAndDelete(id);
-      res.json({ message: " Deleted new successfully" });
+      res.json({ message: " Deleted product successfully" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
@@ -529,11 +574,13 @@ const ProductCtrl = {
         memory,
         display,
         colors,
+        imageMulti,
         category_id,
         brand_id,
         typeProduct_id,
         soluong_sanpham,
         content,
+        discount,
         ...field
       } = parserData;
       const file = req.file;
@@ -562,22 +609,33 @@ const ProductCtrl = {
       }
       const priceConvert = Number(price);
       const soluong_sanphamConvert = Number(soluong_sanpham);
+      const convertDiscount = Number(discount);
+      const price_discount = Math.ceil(
+        priceConvert * ((100 - convertDiscount) / 100)
+      );
       const cloneProduct = {
         name,
         price: priceConvert,
         memory,
         display,
         colors,
+        imageMulti,
         category: category_id,
         brand: brand_id,
         typeProduct: typeProduct_id,
         soluong_sanpham: soluong_sanphamConvert,
+        discount: convertDiscount,
         content,
         ...field,
       };
       const product = await Product.findOneAndUpdate(
         { _id: id },
-        { ...cloneProduct, image: imageUrl, imagePublicId: imagePublicId },
+        {
+          ...cloneProduct,
+          image: imageUrl,
+          imagePublicId: imagePublicId,
+          price_discount: price_discount,
+        },
         { new: true }
       );
       res.json({ product: product, message: " Update Product Successfully" });

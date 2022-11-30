@@ -217,6 +217,25 @@ const PaymentController = {
       return res.status(500).json({ message: error.message });
     }
   },
+  updatePayment: async (req, res) => {
+    try {
+      const { order_id, price_pay } = req.body;
+      const order = await Order.findOne({ order_id: order_id });
+      const { total_price } = order;
+      const price_pay_remaining = total_price - price_pay;
+      const orderUpdatePay = await Order.findOneAndUpdate(
+        { order_id: order_id },
+        { price_pay, price_pay_remaining },
+        { new: true }
+      );
+      res.json({
+        order: orderUpdatePay,
+        message: "Cập nhật thanh toán thành công",
+      });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
   ExportExCel: async (req, res) => {
     try {
       const orders = await Order.find();

@@ -37,6 +37,13 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    price_pay: {
+      type: Number,
+      default: 0,
+    },
+    price_pay_remaining: {
+      type: Number,
+    },
     allow_status: {
       type: Boolean,
       default: false,

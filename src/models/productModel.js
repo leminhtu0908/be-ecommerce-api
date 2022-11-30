@@ -12,12 +12,12 @@ const productSchema = new mongoose.Schema(
       type: Schema.Types.ObjectId,
       ref: "Category",
     },
-    // memorys: [
-    //   {
-    //     type: Schema.Types.ObjectId,
-    //     ref: "Memory",
-    //   },
-    // ],
+    imageMulti: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Image",
+      },
+    ],
     memory: {
       type: String,
     },
@@ -52,6 +52,8 @@ const productSchema = new mongoose.Schema(
     camera_truoc: {
       type: String,
     },
+    discount: { type: Number },
+    price_discount: { type: Number },
     camera_sau: {
       type: String,
     },

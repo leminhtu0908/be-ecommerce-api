@@ -13,34 +13,64 @@ const ImageCtrl = {
   getImageByIdProduct: async (req, res) => {},
   upLoadImage: async (req, res) => {
     try {
-      const { imagePublicId, coverImagePublicId, isCover } = req.body;
-      const imagefind = req.file;
-      if (!imagefind) {
+      const { data } = req.body;
+      const parserData = JSON.parse(data);
+      const { name } = parserData;
+      // const { imagePublicId, coverImagePublicId, isCover } = req.body;
+      // const imagefind = req.file;
+      // if (!imagefind) {
+      //   return res.status(500).send("Please upload an image.");
+      // }
+      // if (imagefind && !imagefind.mimetype.match(/image-*/)) {
+      //   return res.status(500).send("Please upload an image.");
+      // }
+      // const coverOrImagePublicId =
+      //   isCover === "true" ? coverImagePublicId : imagePublicId;
+      // const uploadImage = await uploadToCloudinary(
+      //   imagefind,
+      //   "images",
+      //   coverOrImagePublicId
+      // );
+      // if (uploadImage.secure_url) {
+      //   const addimage = {};
+      //   if (isCover === "true") {
+      //     addimage.coverImage = uploadImage.secure_url;
+      //     addimage.coverImagePublicId = uploadImage.public_id;
+      //   } else {
+      //     addimage.image = uploadImage.secure_url;
+      //     addimage.imagePublicId = uploadImage.public_id;
+      //   }
+      //   const newimage = new Image(addimage);
+      //   await newimage.save();
+      //   res.send({ image: newimage });
+      // }const { data } = req.body;
+      const file = req.file;
+      if (name === "") {
+        res.status(500).json({ message: "Please enter this field " });
+      }
+      if (!file) {
         return res.status(500).send("Please upload an image.");
       }
-      if (imagefind && !imagefind.mimetype.match(/image-*/)) {
+      if (file && !file.mimetype.match(/image-*/)) {
         return res.status(500).send("Please upload an image.");
       }
-      const coverOrImagePublicId =
-        isCover === "true" ? coverImagePublicId : imagePublicId;
-      const uploadImage = await uploadToCloudinary(
-        imagefind,
-        "images",
-        coverOrImagePublicId
-      );
-      if (uploadImage.secure_url) {
-        const addimage = {};
-        if (isCover === "true") {
-          addimage.coverImage = uploadImage.secure_url;
-          addimage.coverImagePublicId = uploadImage.public_id;
-        } else {
-          addimage.image = uploadImage.secure_url;
-          addimage.imagePublicId = uploadImage.public_id;
+      let imageUrl;
+      let imagePublicId;
+      if (file) {
+        const uploadImage = await uploadToCloudinary(file, "images");
+        if (!uploadImage.secure_url) {
+          return res.status(500).send({ message: "Upload file failed" });
         }
-        const newimage = new Image(addimage);
-        await newimage.save();
-        res.send({ image: newimage });
+        imageUrl = uploadImage.secure_url;
+        imagePublicId = uploadImage.public_id;
       }
+      const newimage = new Image({
+        name,
+        image: imageUrl,
+        imagePublicId: imagePublicId,
+      });
+      await newimage.save();
+      res.send({ image: newimage });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
