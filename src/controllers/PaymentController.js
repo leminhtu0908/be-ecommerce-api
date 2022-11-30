@@ -138,6 +138,7 @@ const PaymentController = {
         address: address,
         total_product: product_total,
         total_price: price_total,
+        price_pay_remaining: price_total,
         allow_status: status,
         user: user_id,
       };
@@ -222,7 +223,7 @@ const PaymentController = {
       const { order_id, price_pay } = req.body;
       const order = await Order.findOne({ order_id: order_id });
       const { total_price } = order;
-      const price_pay_remaining = total_price - price_pay;
+      const price_pay_remaining = total_price - Number(price_pay);
       const orderUpdatePay = await Order.findOneAndUpdate(
         { order_id: order_id },
         { price_pay, price_pay_remaining },
@@ -289,15 +290,12 @@ const PaymentController = {
   deleteOrderWaitingAllow: async (req, res) => {
     try {
       const { id } = req.body;
-      const order = await Order.findOne({ _id: id });
-      if (order.allow_status === true) {
-        res
-          .status(400)
-          .send("Đơn hàng của bạn đã được duyệt, Không thể hủy đơn hàng");
-      } else if (order.allow_status === false) {
-        await Order.findByIdAndDelete(id);
-        res.json({ message: "Hủy đơn hàng thành công" });
-      }
+      await Order.findOneAndUpdate(
+        { _id: id },
+        { allow_status: 2 },
+        { new: true }
+      );
+      res.json({ message: "Hủy đơn hàng thành công" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

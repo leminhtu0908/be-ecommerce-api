@@ -174,8 +174,16 @@ router.post("/payment/cash", checkIfUser, PaymentController.createOrder);
 router.post("/payment/visited/cash", PaymentController.createOrderVisited);
 router.get("/order/all", PaymentController.getAllOrder);
 router.get("/order/by-user", PaymentController.getAllOrderByUser);
-router.put("/order/update-status", PaymentController.updateStatusOrder);
-router.put("/order/update-payment", PaymentController.updatePayment);
+router.put(
+  "/order/update-status",
+  checkIfAdmin,
+  PaymentController.updateStatusOrder
+);
+router.put(
+  "/order/update-payment",
+  checkIfAdmin,
+  PaymentController.updatePayment
+);
 router.get("/order/export-excel", checkIfAdmin, PaymentController.ExportExCel);
 router.post(
   "/order/delete",

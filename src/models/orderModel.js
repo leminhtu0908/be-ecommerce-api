@@ -45,8 +45,8 @@ const orderSchema = new mongoose.Schema(
       type: Number,
     },
     allow_status: {
-      type: Boolean,
-      default: false,
+      type: Number,
+      default: 0,
     },
     visited: {
       type: Boolean,
