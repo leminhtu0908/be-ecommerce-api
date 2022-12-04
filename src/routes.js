@@ -152,6 +152,7 @@ router.put(
   [checkIfAdmin, multerUpload.single("image")],
   ProductCtrl.updateProduct
 );
+router.post("/product/rating", ProductCtrl.ratingProduct);
 /*
  *ProductDetail
  */

@@ -100,8 +100,10 @@ const ProductCtrl = {
         display === "" &&
         ram === "" &&
         pin_sac === "" &&
-        // price === "" &&
+        price === "" &&
+        brand === "" &&
         memory === "" &&
+        typeProduct === "" &&
         price_in === "" &&
         price_to === "";
       if (query) {
@@ -126,33 +128,33 @@ const ProductCtrl = {
           ])
           .sort({ createdAt: -1 });
         res.send({ products: products });
+      } else if (brand !== "") {
+        const products = await Product.find({})
+          .populate([
+            { path: "category", select: "-products" },
+            {
+              path: "brand",
+              select: "-products",
+            },
+            {
+              path: "imageMulti",
+            },
+            {
+              path: "colors",
+              select: "-products",
+            },
+            {
+              path: "typeProduct",
+              select: "-products",
+            },
+          ])
+          .sort(price === "Giá từ cao đến thấp" ? { price: -1 } : { price: 1 });
+        const arrProduct = products?.filter(
+          (item) => item.brand.name === brand
+        );
+        res.send({ products: arrProduct });
       }
-      // else if (brand !== "") {
-      //   const products = await Product.find({})
-      //     .populate([
-      //       { path: "category", select: "-products" },
-      //       {
-      //         path: "brand",
-      //         select: "-products",
-      //       },
-      //       {
-      //         path: "imageMulti",
-      //       },
-      //       {
-      //         path: "colors",
-      //         select: "-products",
-      //       },
-      //       {
-      //         path: "typeProduct",
-      //         select: "-products",
-      //       },
-      //     ])
-      //     .sort(price === "Giá từ cao đến thấp" ? { price: -1 } : { price: 1 });
-      //   const arrProduct = products?.filter(
-      //     (item) => item.brand.name === brand
-      //   );
-      //   res.send({ products: arrProduct });
-      // } else if (typeProduct !== "") {
+      // else if (typeProduct !== "") {
       //   const products = await Product.find()
       //     .populate([
       //       { path: "category", select: "-products" },
@@ -177,65 +179,29 @@ const ProductCtrl = {
       //     (item) => item.typeProduct.name === typeProduct
       //   );
       //   res.send({ products: arrProduct });
-      // } else if (price !== "") {
-      //   if (
-      //     price === "Giá từ cao đến thấp" ||
-      //     price === "Giá từ thấp đến cao"
-      //   ) {
-      //     const products = await Product.find({})
-      //       .populate([
-      //         { path: "category", select: "-products" },
-      //         {
-      //           path: "brand",
-      //           select: "-products",
-      //         },
-      //         {
-      //           path: "colors",
-      //           select: "-products",
-      //         },
-      //         {
-      //           path: "typeProduct",
-      //           select: "-products",
-      //         },
-      //       ])
-      //       .sort(
-      //         price === "Giá từ cao đến thấp" ? { price: -1 } : { price: 1 }
-      //       );
-      //     res.send({ products: products });
-      //   } else {
-      //     const products = await Product.find({
-      //       price:
-      //         price === "Dưới 5 triệu"
-      //           ? { $lte: 5000000 }
-      //           : price === "Từ 5 - 10 triệu"
-      //           ? { $gte: 5000000, $lte: 10000000 }
-      //           : price === "Từ 10 - 20 triệu"
-      //           ? { $gte: 10000000, $lte: 20000000 }
-      //           : price === "Trên 20 triệu"
-      //           ? { $gte: 20000000 }
-      //           : null,
-      //     })
-      //       .populate([
-      //         { path: "category", select: "-products" },
-      //         {
-      //           path: "brand",
-      //           select: "-products",
-      //         },
-      //         {
-      //           path: "imageMulti",
-      //         },
-      //         {
-      //           path: "colors",
-      //           select: "-products",
-      //         },
-      //         {
-      //           path: "typeProduct",
-      //           select: "-products",
-      //         },
-      //       ])
-      //       .sort({ createdAt: -1 });
-      //     res.send({ products: products });
-      //   }
+      // }
+      // else if (price !== "") {
+      //   const products = await Product.find({})
+      //     .populate([
+      //       { path: "category", select: "-products" },
+      //       {
+      //         path: "brand",
+      //         select: "-products",
+      //       },
+      //       {
+      //         path: "colors",
+      //         select: "-products",
+      //       },
+      //       {
+      //         path: "imageMulti",
+      //       },
+      //       {
+      //         path: "typeProduct",
+      //         select: "-products",
+      //       },
+      //     ])
+      //     .sort(price === "Giá từ cao đến thấp" ? { price: -1 } : { price: 1 });
+      //   res.send({ products: products });
       // }
       else {
         const products = await Product.find({
@@ -264,7 +230,7 @@ const ProductCtrl = {
               select: "-products",
             },
           ])
-          .sort({ createdAt: -1 });
+          .sort(price === "Giá từ cao đến thấp" ? { price: -1 } : { price: 1 });
         res.send({ products: products });
       }
     } catch (error) {
@@ -644,6 +610,23 @@ const ProductCtrl = {
         { new: true }
       );
       res.json({ product: product, message: " Update Product Successfully" });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
+  ratingProduct: async (req, res) => {
+    try {
+      const random = Math.floor(Math.random() * 100);
+      const { product_id, rating } = req.body;
+      const productRate = await Product.findOne({ product_id: product_id });
+      const { rate } = productRate;
+      const newRating = rate === 0 ? rating : (rating + rate) / 2;
+      await Product.findOneAndUpdate(
+        { product_id: product_id },
+        { rate: Math.ceil(newRating) },
+        { new: true }
+      );
+      res.json({ rate: random, message: " Đánh giá sao thành công" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

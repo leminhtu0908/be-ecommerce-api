@@ -6,6 +6,7 @@ const xlsx = require("xlsx");
 const path = require("path");
 const User = require("../models/userModel");
 const fs = require("fs");
+const Product = require("../models/productModel");
 // APP INFO
 
 const PaymentController = {
@@ -120,17 +121,19 @@ const PaymentController = {
       let cartInfo = [];
       cart?.map((item) => {
         cartInfo.push(item.name);
-        cartInfo.push(item.memorys);
+        cartInfo.push(item.memory);
         cartInfo.push(item.colors);
+        cartInfo.push(item.product_id);
       });
       const convertCartObject = cartInfo.reduce(
         (a, v, index) => ({ ...a, [`key_${index}`]: v }),
         {}
       );
-      const { key_0, key_1, key_2 } = convertCartObject;
+      const { key_0, key_1, key_2, key_3 } = convertCartObject;
       const productNameOrder = `${key_0} - ${key_1} - ${key_2}`;
       const cloneValues = {
         order_id: order_id,
+        product_id: key_3,
         productNameOrder: productNameOrder,
         fullName: name,
         phone: phone,
@@ -197,20 +200,17 @@ const PaymentController = {
   },
   updateStatusOrder: async (req, res) => {
     try {
-      const { allow_status, id } = req.body;
-      // await User.findOneAndUpdate(
-      //   { _id: user_id },
-      //   {
-      //     $set: { "order.$[elem].allow_status": allow_status },
-      //   },
-      //   {
-      //     arrayFilters: [{ "elem.order": { allow_status: allow_status } }],
-      //     new: true,
-      //   }
-      // );
+      const { allow_status, id, product_id } = req.body;
+      const product = await Product.findOne({ product_id: product_id });
+      const { sold } = product;
       const orderUpdate = await Order.findOneAndUpdate(
         { _id: id },
         { allow_status },
+        { new: true }
+      );
+      await Product.findOneAndUpdate(
+        { product_id: product_id },
+        { sold: sold + 1 },
         { new: true }
       );
       res.json({ order: orderUpdate, message: " Duyệt thành công" });
@@ -264,7 +264,11 @@ const PaymentController = {
           order.total_product,
           order.total_price,
           order.createdAt,
-          order.allow_status === true ? "Đã duyệt" : "Đang đợi duyệt",
+          order.allow_status === 1
+            ? "Đã duyệt"
+            : order.allow_status === 0
+            ? "Đang đợi duyệt"
+            : "Đã hủy",
         ];
       });
       const exportPath = path.join(__dirname, `../tmp/order.xlsx`);
