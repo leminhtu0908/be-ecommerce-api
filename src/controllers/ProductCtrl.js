@@ -153,33 +153,32 @@ const ProductCtrl = {
           (item) => item.brand.name === brand
         );
         res.send({ products: arrProduct });
+      } else if (typeProduct !== "") {
+        const products = await Product.find()
+          .populate([
+            { path: "category", select: "-products" },
+            {
+              path: "brand",
+              select: "-products",
+            },
+            {
+              path: "imageMulti",
+            },
+            {
+              path: "colors",
+              select: "-products",
+            },
+            {
+              path: "typeProduct",
+              select: "-products",
+            },
+          ])
+          .sort(price === "Giá từ cao đến thấp" ? { price: -1 } : { price: 1 });
+        const arrProduct = products?.filter(
+          (item) => item.typeProduct.name === typeProduct
+        );
+        res.send({ products: arrProduct });
       }
-      // else if (typeProduct !== "") {
-      //   const products = await Product.find()
-      //     .populate([
-      //       { path: "category", select: "-products" },
-      //       {
-      //         path: "brand",
-      //         select: "-products",
-      //       },
-      //       {
-      //         path: "imageMulti",
-      //       },
-      //       {
-      //         path: "colors",
-      //         select: "-products",
-      //       },
-      //       {
-      //         path: "typeProduct",
-      //         select: "-products",
-      //       },
-      //     ])
-      //     .sort(price === "Giá từ cao đến thấp" ? { price: -1 } : { price: 1 });
-      //   const arrProduct = products?.filter(
-      //     (item) => item.typeProduct.name === typeProduct
-      //   );
-      //   res.send({ products: arrProduct });
-      // }
       // else if (price !== "") {
       //   const products = await Product.find({})
       //     .populate([
@@ -619,11 +618,18 @@ const ProductCtrl = {
       const random = Math.floor(Math.random() * 100);
       const { product_id, rating } = req.body;
       const productRate = await Product.findOne({ product_id: product_id });
-      const { rate } = productRate;
-      const newRating = rate === 0 ? rating : (rating + rate) / 2;
+      const { rate, totalRate, totalReview } = productRate;
+      const newTotalRate = totalRate + rating;
+      const newTotalReview = totalReview + 1;
+      const newRating =
+        rate === 0 ? newTotalRate : (newTotalRate / newTotalReview).toFixed(1);
       await Product.findOneAndUpdate(
         { product_id: product_id },
-        { rate: Math.ceil(newRating) },
+        {
+          rate: newRating,
+          totalRate: newTotalRate,
+          totalReview: newTotalReview,
+        },
         { new: true }
       );
       res.json({ rate: random, message: " Đánh giá sao thành công" });

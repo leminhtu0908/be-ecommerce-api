@@ -8,6 +8,8 @@ const productSchema = new mongoose.Schema(
     price: { type: Number, required: true, trim: true },
     display: { type: String, required: true },
     rate: { type: Number, default: 0 },
+    totalRate: { type: Number, default: 0 },
+    totalReview: { type: Number, default: 0 },
     category: {
       type: Schema.Types.ObjectId,
       ref: "Category",
