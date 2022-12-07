@@ -21,20 +21,20 @@ const NewCtrl = {
       const { title, content, typeNew, slug } = parserData;
       const file = req.file;
       if (title === "" || content === "" || typeNew === "" || slug === "") {
-        res.status(500).json({ message: "Please enter this field " });
+        res.status(500).json({ message: "Vui lòng nhập trường này" });
       }
       if (!file) {
-        return res.status(500).send("Please upload an image.");
+        return res.status(500).send("Vui lòng tải ảnh lên");
       }
       if (file && !file.mimetype.match(/image-*/)) {
-        return res.status(500).send("Please upload an image.");
+        return res.status(500).send("Ảnh không đúng định dạng");
       }
       let imageUrl;
       let imagePublicId;
       if (file) {
         const uploadImage = await uploadToCloudinary(file, "news");
         if (!uploadImage.secure_url) {
-          return res.status(500).send({ message: "Upload file failed" });
+          return res.status(500).send({ message: "Tải ảnh thất bại" });
         }
         imageUrl = uploadImage.secure_url;
         imagePublicId = uploadImage.public_id;
@@ -51,7 +51,7 @@ const NewCtrl = {
         imagePublicId: imagePublicId,
       });
       await newPost.save();
-      res.send({ new: newPost, message: "Create new successfully" });
+      res.send({ new: newPost, message: "Tạo bài viết thành công" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
@@ -62,11 +62,11 @@ const NewCtrl = {
       if (imagePublicId) {
         const deleteImage = await deleteFromCloudinary(imagePublicId);
         if (deleteImage.result !== "ok") {
-          return res.status(500).send({ message: "Error deleting image" });
+          return res.status(500).send({ message: "Xóa ảnh thất bại" });
         }
       }
       await New.findByIdAndDelete(id);
-      res.json({ message: " Deleted new successfully" });
+      res.json({ message: "Xóa bài viết thành công" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
@@ -81,7 +81,7 @@ const NewCtrl = {
     if (imageToDeletePublicId) {
       const deleteImage = await deleteFromCloudinary(imageToDeletePublicId);
       if (deleteImage.result !== "ok") {
-        return res.status(500).send({ message: "Error deleting image" });
+        return res.status(500).send({ message: "Xóa ảnh thất bại" });
       }
     }
     let imageUrl;
@@ -89,7 +89,7 @@ const NewCtrl = {
     if (file) {
       const uploadImage = await uploadToCloudinary(file, "news");
       if (!uploadImage.secure_url) {
-        return res.status(500).send({ message: "Upload file failed" });
+        return res.status(500).send({ message: "Tải ảnh không thành công" });
       }
       imageUrl = uploadImage.secure_url;
       imagePublicId = uploadImage.public_id;
@@ -105,7 +105,7 @@ const NewCtrl = {
       { ...cloneNew, imageNew: imageUrl, imagePublicId: imagePublicId },
       { new: true }
     );
-    res.json({ news: news, message: " Update New Successfully" });
+    res.json({ news: news, message: "Cập nhật bài viết thành công" });
   },
 };
 

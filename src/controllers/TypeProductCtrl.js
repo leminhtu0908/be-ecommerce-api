@@ -14,14 +14,12 @@ const TypeProductCtrl = {
       const { name } = req.body;
       const typeProduct = await TypeProduct.findOne({ name });
       if (typeProduct)
-        return res
-          .status(400)
-          .json({ message: "This type product already exists." });
+        return res.status(400).json({ message: "Loại sản phẩm đã tồn tại" });
       const newTypeProduct = new TypeProduct({ name });
       await newTypeProduct.save();
       res.json({
         type_product: newTypeProduct,
-        message: "Created successfully!",
+        message: "Tạo loại sản phẩm thành công",
       });
     } catch (error) {
       return res.status(500).json({ message: error.message });
@@ -34,10 +32,10 @@ const TypeProductCtrl = {
       if (typeproduct?.products.length > 0) {
         return res
           .status(400)
-          .send("Please delete all products with a relationship");
+          .send("Vui lòng xóa tất cả sản phẩm có chứa loại sản phẩm");
       } else {
         await TypeProduct.findByIdAndDelete(id);
-        res.json({ message: " Deleted successfully!" });
+        res.json({ message: "Xóa loại sản phẩm thành công" });
       }
     } catch (error) {
       return res.status(500).json({ message: error.message });
@@ -51,7 +49,10 @@ const TypeProductCtrl = {
         { name },
         { new: true }
       );
-      res.json({ typeProduct: typeProduct, message: " Update successfully!" });
+      res.json({
+        typeProduct: typeProduct,
+        message: "Cập nhật loại sản phẩm thành công",
+      });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

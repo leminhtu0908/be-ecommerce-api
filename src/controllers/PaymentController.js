@@ -200,7 +200,7 @@ const PaymentController = {
   },
   updateStatusOrder: async (req, res) => {
     try {
-      const { allow_status, id, product_id } = req.body;
+      const { allow_status, id, product_id, soldTotal } = req.body;
       const product = await Product.findOne({ product_id: product_id });
       const { sold } = product;
       const orderUpdate = await Order.findOneAndUpdate(
@@ -210,7 +210,7 @@ const PaymentController = {
       );
       await Product.findOneAndUpdate(
         { product_id: product_id },
-        { sold: sold + 1 },
+        { sold: sold + soldTotal },
         { new: true }
       );
       res.json({ order: orderUpdate, message: " Duyệt thành công" });

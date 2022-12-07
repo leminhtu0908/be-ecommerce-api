@@ -35,10 +35,10 @@ const ColorCtrl = {
     try {
       const { name } = req.body;
       const color = await Color.findOne({ name });
-      if (color) return res.status(400).send("This color already exists.");
+      if (color) return res.status(400).send("Màu đã tồn tại");
       const newColor = new Color({ name });
       await newColor.save();
-      res.json({ color: newColor, message: "Created successfully!" });
+      res.json({ color: newColor, message: "Tạo màu thành công" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
@@ -47,7 +47,7 @@ const ColorCtrl = {
     try {
       const { id } = req.params;
       await Color.findByIdAndRemove(id);
-      res.json({ message: " Deleted successfully!" });
+      res.json({ message: "Xóa màu thành công" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
@@ -60,7 +60,7 @@ const ColorCtrl = {
         { name },
         { new: true }
       );
-      res.json({ color: color, message: " Update successfully!" });
+      res.json({ color: color, message: "Cập nhật màu thành công" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

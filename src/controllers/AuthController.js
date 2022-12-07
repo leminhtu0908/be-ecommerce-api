@@ -37,13 +37,13 @@ const AuthController = {
     if (!fullName || !email || !password) {
       return res
         .status(ErrorCodes.Bad_Request)
-        .send("Please fill in all of the fields.");
+        .send("Vui lòng nhập đầy đủ các trường");
     }
 
     if (!email.match(EmailRegex)) {
       return res
         .status(ErrorCodes.Bad_Request)
-        .send("The email address is not valid.");
+        .send("Địa chỉ email không hợp lệ.");
     }
     //check email verification
     const isEmailVerificationRequired = await checkEmailVerification();
@@ -56,9 +56,8 @@ const AuthController = {
     ) {
       return res
         .status(ErrorCodes.Bad_Request)
-        .send("The email address is already being used.");
+        .send("Địa chỉ email đã được sử dụng");
     }
-
     if (
       existingUser &&
       isEmailVerificationRequired &&
@@ -111,7 +110,7 @@ const AuthController = {
             const token = jwt.sign({ user: body }, process.env.SECRET);
             res
               .cookie("token", token)
-              .send({ user, token, message: "SignUp successfully!" });
+              .send({ user, token, message: "Đăng kí thành công" });
             handler(req, res, next);
           }
         );
@@ -131,9 +130,7 @@ const AuthController = {
         ) {
           return res
             .status(ErrorCodes.Bad_Request)
-            .send(
-              "Your email and password combination does not match an account."
-            );
+            .send("Email hoặc mật khẩu không chính xát");
         }
         if (user.banned) {
           return res
@@ -149,7 +146,7 @@ const AuthController = {
           const authUser = await getAuthUser(user._id);
           return res
             .cookie("token", token)
-            .send({ user: authUser, token, message: "Login successfully!" });
+            .send({ user: authUser, token, message: "Đăng nhập thành công" });
         });
       } catch (error) {
         return next(error);
@@ -158,11 +155,9 @@ const AuthController = {
   },
   logout: async (req, res) => {
     if (req.cookies["token"]) {
-      return res
-        .clearCookie("token")
-        .send("You have been successfully logged out.");
+      return res.clearCookie("token").send("Đăng xuất thành công");
     } else {
-      return res.send("You have been successfully logged out.");
+      return res.send("Đăng xuất thất bại");
     }
   },
   forgotPassword: async (req, res) => {
@@ -172,7 +167,7 @@ const AuthController = {
     if (!user || (user && isEmailVerificationRequired && !user.emailVerified)) {
       return res
         .status(ErrorCodes.Bad_Request)
-        .send("A user with a given email address doesn't exist.");
+        .send("Địa chỉ email không tồn tại, vui lòng kiểm tra lại");
     }
 
     const token = jwt.sign({ user: { email } }, process.env.SECRET, {
@@ -181,10 +176,10 @@ const AuthController = {
     await updateUserResetPasswordToken(user._id, token);
 
     const template = await getEmailTemplate({
-      greeting: `Hey ${user.fullName}`,
-      description: `We received a request to reset your password. You may click the button below to choose your new password. If you do not make this request, you can safely ignore this message.`,
+      greeting: `Chào ${user.fullName}`,
+      description: `Chúng tôi đã nhận được yêu cầu đặt lại mật khẩu của bạn. Bạn có thể nhấp vào nút bên dưới để chọn mật khẩu mới của mình. Nếu bạn không thực hiện yêu cầu này, bạn có thể yên tâm bỏ qua thông báo này.`,
       ctaLink: `${req.headers.origin}/reset-password?email=${email}&token=${token}`,
-      ctaText: "Reset password",
+      ctaText: "Tạo lại mật khẩu",
     });
     try {
       await sendEmail({
@@ -193,7 +188,7 @@ const AuthController = {
         html: template,
       });
       return res.send(
-        `Password reset instruction has been sent to the ${email} email address.`
+        `Hướng dẫn đặt lại mật khẩu đã được gửi đến địa chỉ email : ${email}`
       );
     } catch (error) {
       return res.status(ErrorCodes.Internal).send(ErrorMessages.Generic);
@@ -206,14 +201,14 @@ const AuthController = {
     try {
       decoded = await jwt.verify(token, process.env.SECRET);
     } catch (error) {
-      return res.status(ErrorCodes.Bad_Request).send("The link has expired.");
+      return res.status(ErrorCodes.Bad_Request).send("Liên kết đã hết hạn");
     }
 
     const user = await getUserByEmail(decoded.user.email);
     if (!user) {
       return res
         .status(ErrorCodes.Bad_Request)
-        .send("Password reset has been failed due to invalid arguments.");
+        .send("Đặt lại mật khẩu không thành công do đối số không hợp lệ.");
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
@@ -224,7 +219,7 @@ const AuthController = {
       const token = jwt.sign({ user: body }, process.env.SECRET);
       return res
         .cookie("token", token)
-        .send({ user, token, message: "Reset pasword successfully!" });
+        .send({ user, token, message: "Đặt lại mật khẩu thành công" });
     });
   },
 };

@@ -428,7 +428,7 @@ const ProductCtrl = {
       if (file) {
         const uploadImage = await uploadToCloudinary(file, "products");
         if (!uploadImage.secure_url) {
-          return res.status(500).send({ message: "Upload file failed" });
+          return res.status(500).send({ message: "Tải ảnh thất bại" });
         }
         imageUrl = uploadImage.secure_url;
         imagePublicId = uploadImage.public_id;
@@ -493,7 +493,7 @@ const ProductCtrl = {
       );
       res.json({
         product: addProduct,
-        message: "Created a product successfully",
+        message: "Tạo sản phẩm thành công",
       });
     } catch (error) {
       return res.status(500).json({ message: error.message });
@@ -527,7 +527,7 @@ const ProductCtrl = {
       await typeProduct.save();
       await ProductDetail.findOneAndRemove(product?.description?._id);
       await Product.findByIdAndDelete(id);
-      res.json({ message: " Deleted product successfully" });
+      res.json({ message: "Xóa sản phẩm thành công" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
@@ -608,7 +608,7 @@ const ProductCtrl = {
         },
         { new: true }
       );
-      res.json({ product: product, message: " Update Product Successfully" });
+      res.json({ product: product, message: "Cập nhật sản phẩm thành công" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
@@ -632,7 +632,7 @@ const ProductCtrl = {
         },
         { new: true }
       );
-      res.json({ rate: random, message: " Đánh giá sao thành công" });
+      res.json({ rate: random, message: "Đánh giá thành công" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

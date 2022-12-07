@@ -4,6 +4,7 @@ const BannerCtrl = require("./controllers/BannerCtrl");
 const BrandCtrl = require("./controllers/BrandCtrl");
 const { CategoryCtrl } = require("./controllers/CategoryCtrl");
 const ColorCtrl = require("./controllers/ColorCtrl");
+const DashboardController = require("./controllers/DashboardCtrl");
 const ImageCtrl = require("./controllers/ImageCtrl");
 const MemoryCtrl = require("./controllers/MemoryCtrl");
 const NewCtrl = require("./controllers/NewCtrl");
@@ -191,4 +192,6 @@ router.post(
   checkIfUser,
   PaymentController.deleteOrderWaitingAllow
 );
+/* Dashboard */
+router.get("/dashboard", checkIfAdmin, DashboardController.getDashboard);
 module.exports = router;

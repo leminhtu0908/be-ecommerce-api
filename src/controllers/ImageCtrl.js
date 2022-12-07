@@ -46,20 +46,20 @@ const ImageCtrl = {
       // }const { data } = req.body;
       const file = req.file;
       if (name === "") {
-        res.status(500).json({ message: "Please enter this field " });
+        res.status(500).json({ message: "Vui lòng nhập trường này" });
       }
       if (!file) {
-        return res.status(500).send("Please upload an image.");
+        return res.status(500).send("Vui lòng tải ảnh lên");
       }
       if (file && !file.mimetype.match(/image-*/)) {
-        return res.status(500).send("Please upload an image.");
+        return res.status(500).send("Ảnh không đúng định dạng");
       }
       let imageUrl;
       let imagePublicId;
       if (file) {
         const uploadImage = await uploadToCloudinary(file, "images");
         if (!uploadImage.secure_url) {
-          return res.status(500).send({ message: "Upload file failed" });
+          return res.status(500).send({ message: "Tải ảnh thất bại" });
         }
         imageUrl = uploadImage.secure_url;
         imagePublicId = uploadImage.public_id;
@@ -96,7 +96,7 @@ const ImageCtrl = {
       await newimage.save();
       res.send({
         newimage,
-        message: "Upload image successfully",
+        message: "Tải ảnh thành công",
       });
     } catch (error) {
       return res.status(500).json({ message: error.message });

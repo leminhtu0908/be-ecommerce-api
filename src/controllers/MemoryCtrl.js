@@ -13,10 +13,10 @@ const MemoryCtrl = {
     try {
       const { name } = req.body;
       const memory = await Memory.findOne({ name });
-      if (memory) return res.status(400).send("This memory already exists.");
+      if (memory) return res.status(400).send("Bộ nhớ đã tồn tại");
       const newMemory = await Memory({ name });
       await newMemory.save();
-      res.json({ memory: newMemory, message: "Created successfully!" });
+      res.json({ memory: newMemory, message: "Tạo bộ nhớ thành công" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
@@ -25,7 +25,7 @@ const MemoryCtrl = {
     try {
       const { id } = req.params;
       await Memory.findByIdAndRemove(id);
-      res.json({ message: " Deleted successfully!" });
+      res.json({ message: "Xóa bộ nhớ thành công" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
@@ -38,7 +38,7 @@ const MemoryCtrl = {
         { name },
         { new: true }
       );
-      res.json({ memory: memory, message: " Update successfully!" });
+      res.json({ memory: memory, message: "Cập nhật bộ nhớ thành công" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

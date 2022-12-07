@@ -26,12 +26,10 @@ const CategoryCtrl = {
       const { name } = req.body;
       const category = await Category.findOne({ name });
       if (category)
-        return res
-          .status(400)
-          .json({ message: "This category already exists." });
+        return res.status(400).json({ message: "Danh mục đã tồn tại" });
       const newCategory = new Category({ name });
       await newCategory.save();
-      res.json({ category: newCategory, message: "Created successfully!" });
+      res.json({ category: newCategory, message: "Tạo danh mục thành công!" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
@@ -43,10 +41,10 @@ const CategoryCtrl = {
       if (categories?.products.length > 0) {
         return res
           .status(400)
-          .send("Please delete all products with a relationship");
+          .send("Vui lòng xóa tất cả các sản phẩm chứa trong danh mục");
       } else {
         await Category.findByIdAndDelete(id);
-        res.json({ message: " Deleted successfully!" });
+        res.json({ message: " Xóa danh mục thành công" });
       }
     } catch (error) {
       return res.status(500).json({ message: error.message });
@@ -60,7 +58,10 @@ const CategoryCtrl = {
         { name },
         { new: true }
       );
-      res.json({ category: categoryUpdate, message: " Update Successfully" });
+      res.json({
+        category: categoryUpdate,
+        message: "Cập nhật danh mục thành công",
+      });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

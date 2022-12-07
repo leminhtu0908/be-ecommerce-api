@@ -14,10 +14,10 @@ const BrandCtrl = {
       const { name } = req.body;
       const brand = await Brand.findOne({ name });
       if (brand)
-        return res.status(400).json({ message: "This brand already exists." });
+        return res.status(400).json({ message: "Nhà sản xuất đã tồn tại" });
       const newBrand = new Brand({ name });
       await newBrand.save();
-      res.json({ brand: newBrand, message: "Created successfully" });
+      res.json({ brand: newBrand, message: "Tạo nhà sản xuất thành công" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
@@ -29,10 +29,10 @@ const BrandCtrl = {
       if (brands?.products.length > 0) {
         return res
           .status(400)
-          .send("Please delete all products with a relationship");
+          .send("Vui lòng xóa tất cả các sản phẩm chứa trong nhà sản xuất");
       } else {
         await Brand.findByIdAndRemove(id);
-        res.json({ message: " Deleted successfully!" });
+        res.json({ message: "Xóa nhà sản xuất thành công!" });
       }
     } catch (error) {
       return res.status(500).json({ message: error.message });
@@ -46,7 +46,7 @@ const BrandCtrl = {
         { name },
         { new: true }
       );
-      res.json({ brand: brand, message: " Update successfully!" });
+      res.json({ brand: brand, message: "Cập nhật nhà xuất thành công" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

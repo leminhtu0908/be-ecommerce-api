@@ -18,10 +18,10 @@ const BannerCtrl = {
       const { imagePublicId, coverImagePublicId, isCover } = req.body;
       const file = req.file;
       if (!file) {
-        return res.status(500).send("Please upload an image.");
+        return res.status(500).send("Vui lòng tải ảnh lên");
       }
       if (file && !file.mimetype.match(/image-*/)) {
-        return res.status(500).send("Please upload an image.");
+        return res.status(500).send("Ảnh không đúng định dạng");
       }
       const coverOrImagePublicId =
         isCover === "true" ? coverImagePublicId : imagePublicId;
@@ -43,7 +43,7 @@ const BannerCtrl = {
         await newBanner.save();
         res.send({
           banner: newBanner,
-          message: "Upload image banner successfully",
+          message: "Tải ảnh quảng cáo thành công",
         });
       }
     } catch (error) {
@@ -60,7 +60,7 @@ const BannerCtrl = {
         }
       }
       await Banner.findByIdAndDelete(id);
-      res.json({ message: " Deleted image banner successfully" });
+      res.json({ message: "Xóa ảnh quảng cáo thành công" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

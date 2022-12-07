@@ -34,10 +34,10 @@ const UserCtrl = {
     const authUser = req.user;
     const image = req.file;
     if (!image) {
-      return res.status(500).send("Please upload an image.");
+      return res.status(500).send("Vui lòng tải ảnh lên");
     }
     if (image && !image.mimetype.match(/image-*/)) {
-      return res.status(500).send("Please upload an image.");
+      return res.status(500).send("Ảnh không đúng định dạng");
     }
 
     const coverOrImagePublicId =
@@ -69,7 +69,7 @@ const UserCtrl = {
     }
     return res
       .status(500)
-      .send({ message: "upload image unsuccessful, please try again" });
+      .send({ message: "Lưu ảnh thất bại, vui lòng thử lại" });
   },
   updateUser: async (req, res) => {
     try {
@@ -87,7 +87,7 @@ const UserCtrl = {
         { _id: _id },
         { fullName, email, dateofbirth, address, gender, phone, nickName }
       );
-      res.json({ user: userUpdate, message: " Update user successfully" });
+      res.json({ user: userUpdate, message: "Cập nhật thông tin thành công" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
