@@ -59,6 +59,7 @@ const orderSchema = new mongoose.Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
+    cart: [],
   },
   {
     timestamps: true,

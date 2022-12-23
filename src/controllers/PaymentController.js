@@ -144,6 +144,7 @@ const PaymentController = {
         price_pay_remaining: price_total,
         allow_status: status,
         user: user_id,
+        cart: cart,
       };
       const newOrder = new Order(cloneValues);
       await newOrder.save();
