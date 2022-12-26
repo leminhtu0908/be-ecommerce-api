@@ -4,6 +4,7 @@
       { "src": "*.js", "use": "@vercel/node" }
     ],
     "routes": [
-        { "src": "/(.*)", "dest": "/"}
+        { "src": "/(.*)", "dest": "/","headers": { "Cache-Control": "public, max-age=31556952, immutable" },
+        "continue": true}
       ]
   }
