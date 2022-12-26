@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "node index.js",
+    "build": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Le Minh Tu",
@@ -17,10 +18,12 @@
     "bcrypt": "^5.1.0",
     "cloudinary": "^1.32.0",
     "compression": "^1.7.4",
+    "config": "^3.3.8",
     "connect-mongo": "^4.6.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "crypto-js": "^4.1.1",
+    "dateformat": "^2.2.0",
     "dotenv": "^16.0.2",
     "esm": "^3.2.25",
     "express": "^4.18.1",

@@ -1,6 +1,7 @@
 const axios = require("axios"); // npm install axios
 const CryptoJS = require("crypto-js"); // npm install crypto-js
 const moment = require("moment"); // npm install moment
+const dateFormat = require("dateformat");
 const Order = require("../models/orderModel");
 const xlsx = require("xlsx");
 const path = require("path");
@@ -8,62 +9,73 @@ const User = require("../models/userModel");
 const fs = require("fs");
 const Product = require("../models/productModel");
 // APP INFO
-
+const configURL = {
+  vnp_TmnCode: "UDOPNWS1",
+  vnp_HashSecret: "",
+  vnp_Url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html",
+  vnp_ReturnUrl: "https://lmt-shop.vercel.app/order/vnpay_return",
+};
 const PaymentController = {
-  getZaloPay: async (req, res) => {
-    console.log(req.body);
-    const { amount, name, cart, transID } = req.body;
-    const config = {
-      app_id: "2553",
-      key1: "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",
-      key2: "kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz",
-      endpoint: "https://sb-openapi.zalopay.vn/v2/create",
-    };
-
-    const embed_data = {};
-
-    const items = [{}];
-    // const transID = Math.floor(Math.random() * 1000000);
-    const order = {
-      app_id: config.app_id,
-      app_trans_id: `${moment().format("YYMMDD")}_${transID}`, // translation missing: vi.docs.shared.sample_code.comments.app_trans_id
-      app_user: name,
-      app_time: Date.now(), // miliseconds
-      item: JSON.stringify(cart),
-      embed_data: JSON.stringify(embed_data),
-      amount: amount,
-      description: `Lazada - Payment for the order #${transID}`,
-      bank_code: "zalopayapp",
-    };
-
-    // appid|app_trans_id|appuser|amount|apptime|embeddata|item
-    const data =
-      config.app_id +
-      "|" +
-      order.app_trans_id +
-      "|" +
-      order.app_user +
-      "|" +
-      order.amount +
-      "|" +
-      order.app_time +
-      "|" +
-      order.embed_data +
-      "|" +
-      order.item;
-    order.mac = CryptoJS.HmacSHA256(data, config.key1).toString();
-    const fetchApi = async () => {
-      const response = await axios
-        .post(config.endpoint, null, { params: order })
-        .then((res) => {
-          return res.data;
-        })
-        .catch((err) => console.log(err));
-      return response;
-    };
+  getVNPay: async (req, res) => {
     try {
-      const data = await fetchApi();
-      res.send(data);
+      var ipAddr =
+        req.headers["x-forwarded-for"] ||
+        req.connection.remoteAddress ||
+        req.socket.remoteAddress ||
+        req.connection.socket.remoteAddress;
+
+      var tmnCode = configURL.vnp_TmnCode;
+      var secretKey = configURL.vnp_HashSecret;
+      var vnpUrl = configURL.vnp_Url;
+      var returnUrl = configURL.vnp_ReturnUrl;
+      var dateFormat = require("dateformat");
+
+      var date = new Date();
+      var dateExpr = new Date(date);
+      dateExpr.setMinutes(date.getMinutes() + 30);
+      var createDate = dateFormat(date, "yyyymmddHHmmss");
+      var orderId = Math.floor(Math.random() * 10000);
+      var amount = req.body.amount;
+      var bankCode = req.body.bankCode;
+      var expr = dateFormat(dateExpr, "yyyymmddHHmmss");
+      var orderInfo = req.body.orderDescription;
+      var orderType = req.body.orderType;
+      var locale = req.body.language;
+      if (locale === null || locale === "") {
+        locale = "vn";
+      }
+      var currCode = "VND";
+      var vnp_Params = {};
+      vnp_Params["vnp_Version"] = "2.1.0";
+      vnp_Params["vnp_Command"] = "pay";
+      vnp_Params["vnp_TmnCode"] = tmnCode;
+      // vnp_Params['vnp_Merchant'] = ''
+      vnp_Params["vnp_Locale"] = locale;
+      vnp_Params["vnp_CurrCode"] = currCode;
+      vnp_Params["vnp_TxnRef"] = orderId;
+      vnp_Params["vnp_OrderInfo"] = orderInfo;
+      vnp_Params["vnp_OrderType"] = orderType;
+      vnp_Params["vnp_Amount"] = amount * 100;
+      vnp_Params["vnp_ReturnUrl"] = returnUrl;
+      vnp_Params["vnp_IpAddr"] = ipAddr;
+      vnp_Params["vnp_CreateDate"] = createDate;
+      vnp_Params["vnp_ExpireDate"] = expr;
+      if (bankCode !== null && bankCode !== "") {
+        vnp_Params["vnp_BankCode"] = bankCode;
+      }
+
+      vnp_Params = sortObject(vnp_Params);
+
+      var querystring = require("qs");
+      var signData = querystring.stringify(vnp_Params, { encode: false });
+      var crypto = require("crypto");
+      var hmac = crypto.createHmac("sha512", secretKey);
+      var signed = hmac
+        .update(new Buffer.from(signData, "utf-8"))
+        .digest("hex");
+      vnp_Params["vnp_SecureHash"] = signed;
+      vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
+      res.json({ data: vnp_Params, url: vnpUrl, status: "success" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
@@ -306,5 +318,19 @@ const PaymentController = {
     }
   },
 };
-
+function sortObject(obj) {
+  var sorted = {};
+  var str = [];
+  var key;
+  for (key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      str.push(encodeURIComponent(key));
+    }
+  }
+  str.sort();
+  for (key = 0; key < str.length; key++) {
+    sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(/%20/g, "+");
+  }
+  return sorted;
+}
 module.exports = PaymentController;

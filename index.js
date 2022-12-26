@@ -7,7 +7,7 @@ const compression = require("compression");
 const cookieParser = require("cookie-parser");
 const routes = require("./src/routes");
 const initDb = require("./src/db/connection");
-const { initPassport } = require("./src/configs/passportConfig");
+const { initPassport } = require("./src/config/passportConfig");
 // const socket = require("./socket");
 // const { initPassport } = require("./authentication");
 
