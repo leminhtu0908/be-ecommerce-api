@@ -2,6 +2,7 @@ const Category = require("../models/categoryModel");
 const Brand = require("../models/brandModel");
 const Product = require("../models/productModel");
 const TypeProduct = require("../models/typeProductModel");
+const Order = require("../models/orderModel");
 const {
   uploadToCloudinary,
   deleteFromCloudinary,
@@ -502,6 +503,13 @@ const ProductCtrl = {
   deleteProduct: async (req, res) => {
     try {
       const { id, imagePublicId } = req.body;
+      const cartOrder = await Order.find();
+      const checkOrder = cartOrder.filter((item) =>
+        item.cart.filter((cart) => cart.product_id === id)
+      );
+      if (checkOrder.length > 0) {
+        return res.status(500).send("Sản phẩm đã được đặt hàng, Không thể xóa");
+      }
       if (imagePublicId) {
         const deleteImage = await deleteFromCloudinary(imagePublicId);
         if (deleteImage.result !== "ok") {
