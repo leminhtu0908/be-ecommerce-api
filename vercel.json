@@ -1,10 +1,7 @@
 {
     "version":2,
     "builds": [
-      { "src": "*.js", "use": "@vercel/node" }
+      { "src": "./index.js", "use": "@vercel/node" }
     ],
-    "routes": [
-        { "src": "/(.*)", "dest": "/","headers": { "Cache-Control": "public, max-age=31556952, immutable" },
-        "continue": true}
-      ]
-  }
+    "routes": [{ "src": "/(.*)", "dest": "/"}]
+}
