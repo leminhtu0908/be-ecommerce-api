@@ -5,9 +5,9 @@ const { createServer } = require("http");
 const passport = require("passport");
 const compression = require("compression");
 const cookieParser = require("cookie-parser");
-const routes = require("./src/routes");
-const initDb = require("./src/db/connection");
-const { initPassport } = require("./src/configs/passportConfig");
+const routes = require("./routes");
+const initDb = require("./db/connection");
+const { initPassport } = require("./configs/passportConfig");
 // const socket = require("./socket");
 // const { initPassport } = require("./authentication");
 
