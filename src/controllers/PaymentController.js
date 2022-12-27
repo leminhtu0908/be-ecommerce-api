@@ -11,10 +11,28 @@ const Product = require("../models/productModel");
 // APP INFO
 const configURL = {
   vnp_TmnCode: "UDOPNWS1",
-  vnp_HashSecret: "",
+  vnp_HashSecret:
+    "3e0d61a0c0534b2e36680b3f7277743e8784cc4e1d68fa7d276e79c23be7d6318d338b477910a27992f5057bb1582bd44bd82ae8009ffaf6d141219218625c42",
   vnp_Url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html",
   vnp_ReturnUrl: "https://lmt-shop.vercel.app/order/vnpay_return",
 };
+Date.prototype.YYYYMMDDHHMMSS = function () {
+  var yyyy = this.getFullYear().toString();
+  var MM = pad(this.getMonth() + 1, 2);
+  var dd = pad(this.getDate(), 2);
+  var hh = pad(this.getHours(), 2);
+  var mm = pad(this.getMinutes(), 2);
+  var ss = pad(this.getSeconds(), 2);
+
+  return yyyy + MM + dd + hh + mm + ss;
+};
+function pad(number, length) {
+  var str = "" + number;
+  while (str.length < length) {
+    str = "0" + str;
+  }
+  return str;
+}
 const PaymentController = {
   getVNPay: async (req, res) => {
     try {
@@ -28,16 +46,15 @@ const PaymentController = {
       var secretKey = configURL.vnp_HashSecret;
       var vnpUrl = configURL.vnp_Url;
       var returnUrl = configURL.vnp_ReturnUrl;
-      var dateFormat = require("dateformat");
+      date = new Date();
 
-      var date = new Date();
-      var dateExpr = new Date(date);
-      dateExpr.setMinutes(date.getMinutes() + 30);
-      var createDate = dateFormat(date, "yyyymmddHHmmss");
-      var orderId = Math.floor(Math.random() * 10000);
+      const dateExpr = moment(new Date()).add(30, "m").toDate();
+      const createDate = date.YYYYMMDDHHMMSS();
+      const createDateExpr = dateExpr.YYYYMMDDHHMMSS();
+
+      var orderId = req.body.transID;
       var amount = req.body.amount;
       var bankCode = req.body.bankCode;
-      var expr = dateFormat(dateExpr, "yyyymmddHHmmss");
       var orderInfo = req.body.orderDescription;
       var orderType = req.body.orderType;
       var locale = req.body.language;
@@ -49,25 +66,24 @@ const PaymentController = {
       vnp_Params["vnp_Version"] = "2.1.0";
       vnp_Params["vnp_Command"] = "pay";
       vnp_Params["vnp_TmnCode"] = tmnCode;
-      // vnp_Params['vnp_Merchant'] = ''
-      vnp_Params["vnp_Locale"] = locale;
-      vnp_Params["vnp_CurrCode"] = currCode;
-      vnp_Params["vnp_TxnRef"] = orderId;
-      vnp_Params["vnp_OrderInfo"] = orderInfo;
-      vnp_Params["vnp_OrderType"] = orderType;
       vnp_Params["vnp_Amount"] = amount * 100;
-      vnp_Params["vnp_ReturnUrl"] = returnUrl;
-      vnp_Params["vnp_IpAddr"] = ipAddr;
-      vnp_Params["vnp_CreateDate"] = createDate;
-      vnp_Params["vnp_ExpireDate"] = expr;
+      // vnp_Params['vnp_Merchant'] = ''
       if (bankCode !== null && bankCode !== "") {
         vnp_Params["vnp_BankCode"] = bankCode;
       }
-
+      vnp_Params["vnp_CreateDate"] = createDate;
+      vnp_Params["vnp_CurrCode"] = currCode;
+      vnp_Params["vnp_IpAddr"] = ipAddr;
+      vnp_Params["vnp_Locale"] = locale;
+      vnp_Params["vnp_OrderInfo"] = orderInfo;
+      vnp_Params["vnp_OrderType"] = orderType;
+      vnp_Params["vnp_ReturnUrl"] = returnUrl;
+      vnp_Params["vnp_TxnRef"] = orderId;
+      vnp_Params["vnp_ExpireDate"] = createDateExpr;
       vnp_Params = sortObject(vnp_Params);
 
       var querystring = require("qs");
-      var signData = querystring.stringify(vnp_Params, { encode: false });
+      const signData = querystring.stringify(vnp_Params, { encode: false });
       var crypto = require("crypto");
       var hmac = crypto.createHmac("sha512", secretKey);
       var signed = hmac
