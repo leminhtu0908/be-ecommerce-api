@@ -96,14 +96,78 @@ const PaymentController = {
   //     return res.status(500).json({ message: error.message });
   //   }
   // },
+  // getZaloPay: async (req, res) => {
+  //   console.log(req.body);
+  //   const { amount, name, cart, transID } = req.body;
+  //   const config = {
+  //     app_id: "2553",
+  //     key1: "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",
+  //     key2: "kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz",
+  //     endpoint: "https://sbgateway.zalopay.vn/api/getlistmerchantbanks",
+  //   };
+
+  //   const embed_data = {
+  //     promotioninfo: "",
+  //     merchantinfo: "embeddata123",
+  //     bankgroup: "ATM",
+  //   };
+
+  //   const items = [{}];
+  //   // const transID = Math.floor(Math.random() * 1000000);
+  //   const order = {
+  //     app_id: config.app_id,
+  //     app_trans_id: `${moment().format("YYMMDD")}_${transID}`, // translation missing: vi.docs.shared.sample_code.comments.app_trans_id
+  //     app_user: name,
+  //     app_time: Date.now(), // miliseconds
+  //     item: JSON.stringify(cart),
+  //     embed_data: JSON.stringify(embed_data),
+  //     amount: amount,
+  //     description: `Lazada - Payment for the order #${transID}`,
+  //     bank_code: "",
+  //   };
+
+  //   // appid|app_trans_id|appuser|amount|apptime|embeddata|item
+  //   const data =
+  //     config.app_id +
+  //     "|" +
+  //     order.app_trans_id +
+  //     "|" +
+  //     order.app_user +
+  //     "|" +
+  //     order.amount +
+  //     "|" +
+  //     order.app_time +
+  //     "|" +
+  //     order.embed_data +
+  //     "|" +
+  //     order.item;
+  //   order.mac = CryptoJS.HmacSHA256(data, config.key1).toString();
+  //   const fetchApi = async () => {
+  //     const response = await axios
+  //       .post(config.endpoint, null, { params: order })
+  //       .then((res) => {
+  //         return res.data;
+  //       })
+  //       .catch((err) => console.log(err));
+  //     return response;
+  //   };
+  //   try {
+  //     const data = await fetchApi();
+  //     console.log(data);
+  //     res.send(data);
+  //   } catch (error) {
+  //     return res.status(500).json({ message: error.message });
+  //   }
+  // },
   getZaloPay: async (req, res) => {
-    console.log(req.body);
-    const { amount, name, cart, transID } = req.body;
+    // APP INFO
+    const { amount, name, cart, transID, ...filed } = req.body;
+
     const config = {
-      app_id: "2553",
+      appid: "2553",
       key1: "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",
       key2: "kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz",
-      endpoint: "https://sb-openapi.zalopay.vn/v2/create",
+      endpoint: "https://sandbox.zalopay.com.vn/v001/tpe/createorder",
     };
 
     const embed_data = {
@@ -112,36 +176,50 @@ const PaymentController = {
       bankgroup: "ATM",
     };
 
-    const items = [{}];
+    // const items = [
+    //   {
+    //     itemid: "knb",
+    //     itename: "kim nguyen bao",
+    //     itemprice: 198400,
+    //     itemquantity: 1,
+    //   },
+    // ];
     // const transID = Math.floor(Math.random() * 1000000);
     const order = {
-      app_id: config.app_id,
-      app_trans_id: `${moment().format("YYMMDD")}_${transID}`, // translation missing: vi.docs.shared.sample_code.comments.app_trans_id
-      app_user: name,
-      app_time: Date.now(), // miliseconds
-      item: JSON.stringify(cart),
-      embed_data: JSON.stringify(embed_data),
-      amount: amount,
-      description: `Lazada - Payment for the order #${transID}`,
-      bank_code: "",
+      appid: config.appid,
+      apptransid: `${moment().format("YYMMDD")}_${transID}`, // translation missing: vi.docs.shared.sample_code.comments.app_trans_id
+      appuser: req.body.name,
+      apptime: Date.now(), // miliseconds
+      item: JSON.stringify(req.body.cart),
+      embeddata: JSON.stringify(embed_data),
+      amount: req.body.amount,
+      description: `Lazada - Payment for the order #${req.body.transID}`,
+      bankcode: "",
     };
 
     // appid|app_trans_id|appuser|amount|apptime|embeddata|item
     const data =
-      config.app_id +
+      config.appid +
       "|" +
-      order.app_trans_id +
+      order.apptransid +
       "|" +
-      order.app_user +
+      order.appuser +
       "|" +
       order.amount +
       "|" +
-      order.app_time +
+      order.apptime +
       "|" +
-      order.embed_data +
+      order.embeddata +
       "|" +
       order.item;
     order.mac = CryptoJS.HmacSHA256(data, config.key1).toString();
+    console.log(order);
+    // axios
+    //   .post(config.endpoint, null, { params: order })
+    //   .then((response) => {
+    //     res.json({ data: response.data });
+    //   })
+    //   .catch((err) => console.log(err));
     const fetchApi = async () => {
       const response = await axios
         .post(config.endpoint, null, { params: order })
@@ -153,7 +231,7 @@ const PaymentController = {
     };
     try {
       const data = await fetchApi();
-      res.send(data);
+      res.json({ data: data });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
