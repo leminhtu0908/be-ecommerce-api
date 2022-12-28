@@ -171,7 +171,8 @@ router.put(
 );
 
 /* Payment */
-router.post("/payment/vnpay", checkIfUser, PaymentController.getVNPay);
+// router.post("/payment/vnpay", checkIfUser, PaymentController.getVNPay);
+router.post("/payment/zalopay", checkIfUser, PaymentController.getZaloPay);
 router.post("/payment/cash", checkIfUser, PaymentController.createOrder);
 router.post("/payment/visited/cash", PaymentController.createOrderVisited);
 router.get("/order/all", PaymentController.getAllOrder);
