@@ -8,6 +8,7 @@ const path = require("path");
 const User = require("../models/userModel");
 const fs = require("fs");
 const Product = require("../models/productModel");
+const qs = require("qs");
 // // APP INFO
 // const configURL = {
 //   vnp_TmnCode: "UDOPNWS1",
@@ -161,7 +162,6 @@ const PaymentController = {
   // },
   getZaloPay: async (req, res) => {
     // APP INFO
-    console.log(req.body);
     const config = {
       appid: "2553",
       key1: "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",
@@ -172,6 +172,7 @@ const PaymentController = {
     const embed_data = {
       promotioninfo: "",
       merchantinfo: "embeddata123",
+      redirecturl: "http://localhost:3000/order-status",
       bankgroup: "ATM",
     };
 
@@ -212,29 +213,61 @@ const PaymentController = {
       "|" +
       order.item;
     order.mac = CryptoJS.HmacSHA256(data, config.key1).toString();
-    console.log(order);
     // axios
     //   .post(config.endpoint, null, { params: order })
     //   .then((response) => {
     //     res.json({ data: response.data });
     //   })
     //   .catch((err) => console.log(err));
-    const fetchApi = async () => {
+    try {
       const response = await axios
         .post(config.endpoint, null, { params: order })
         .then((res) => {
+          console.log(res.data);
           return res.data;
         })
         .catch((err) => console.log(err));
-      return response;
-    };
-    try {
-      const data = await fetchApi();
-      res.json({ data: data });
+      res.json({ data: response });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
   },
+  getStatusOrderCheckoutZalopay: async (req, res) => {
+    const config = {
+      appid: "553",
+      key1: "9phuAOYhan4urywHTh0ndEXiV3pKHr5Q",
+      key2: "Iyz2habzyr7AG8SgvoBCbKwKi3UzlLi3",
+      endpoint: "https://sandbox.zalopay.com.vn/v001/tpe/getstatusbyapptransid",
+    };
+
+    let postData = {
+      appid: config.appid,
+      apptransid: req.body.apptransid, // Input your apptransid
+    };
+
+    let data = postData.appid + "|" + postData.apptransid + "|" + config.key1; // appid|apptransid|key1
+    postData.mac = CryptoJS.HmacSHA256(data, config.key1).toString();
+
+    let postConfig = {
+      method: "post",
+      url: config.endpoint,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      data: qs.stringify(postData),
+    };
+
+    const responseData = await axios(postConfig)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+        return response.data;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    res.json({ data: responseData });
+  },
+
   getAllOrder: async (req, res) => {
     try {
       const { allow_status } = req.query;
