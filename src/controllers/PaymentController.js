@@ -161,8 +161,7 @@ const PaymentController = {
   // },
   getZaloPay: async (req, res) => {
     // APP INFO
-    const { amount, name, cart, transID, ...filed } = req.body;
-
+    console.log(req.body);
     const config = {
       appid: "2553",
       key1: "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",
@@ -187,7 +186,7 @@ const PaymentController = {
     // const transID = Math.floor(Math.random() * 1000000);
     const order = {
       appid: config.appid,
-      apptransid: `${moment().format("YYMMDD")}_${transID}`, // translation missing: vi.docs.shared.sample_code.comments.app_trans_id
+      apptransid: `${moment().format("YYMMDD")}_${req.body.transID}`, // translation missing: vi.docs.shared.sample_code.comments.app_trans_id
       appuser: req.body.name,
       apptime: Date.now(), // miliseconds
       item: JSON.stringify(req.body.cart),
