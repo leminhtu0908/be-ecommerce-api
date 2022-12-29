@@ -164,10 +164,10 @@ const PaymentController = {
   getZaloPay: async (req, res) => {
     // APP INFO
     const config = {
-      appid: "2553",
+      app_id: "2553",
       key1: "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",
       key2: "kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz",
-      endpoint: "https://sandbox.zalopay.com.vn/v001/tpe/createorder",
+      endpoint: "https://sb-openapi.zalopay.vn/v2/create",
     };
 
     const embed_data = {
@@ -188,30 +188,30 @@ const PaymentController = {
     // ];
     // const transID = Math.floor(Math.random() * 1000000);
     const order = {
-      appid: config.appid,
-      apptransid: `${moment().format("YYMMDD")}_${req.body.transID}`, // translation missing: vi.docs.shared.sample_code.comments.app_trans_id
-      appuser: req.body.name,
-      apptime: Date.now(), // miliseconds
+      app_id: config.app_id,
+      app_trans_id: `${moment().format("YYMMDD")}_${req.body.transID}`, // translation missing: vi.docs.shared.sample_code.comments.app_trans_id
+      app_user: req.body.name,
+      app_time: Date.now(), // miliseconds
       item: JSON.stringify(req.body.cart),
-      embeddata: JSON.stringify(embed_data),
+      embed_data: JSON.stringify(embed_data),
       amount: req.body.amount,
       description: `Thanh toán cho đơn hàng #${req.body.transID}`,
-      bankcode: "",
+      bank_code: "",
     };
 
-    // appid|app_trans_id|appuser|amount|apptime|embeddata|item
+    // app_id|app_trans_id|appuser|amount|apptime|embeddata|item
     const data =
-      config.appid +
+      config.app_id +
       "|" +
-      order.apptransid +
+      order.app_trans_id +
       "|" +
-      order.appuser +
+      order.app_user +
       "|" +
       order.amount +
       "|" +
-      order.apptime +
+      order.app_time +
       "|" +
-      order.embeddata +
+      order.embed_data +
       "|" +
       order.item;
     order.mac = CryptoJS.HmacSHA256(data, config.key1).toString();
@@ -237,18 +237,19 @@ const PaymentController = {
   },
   getStatusOrderCheckoutZalopay: async (req, res) => {
     const config = {
-      appid: "553",
-      key1: "9phuAOYhan4urywHTh0ndEXiV3pKHr5Q",
-      key2: "Iyz2habzyr7AG8SgvoBCbKwKi3UzlLi3",
-      endpoint: "https://sandbox.zalopay.com.vn/v001/tpe/getstatusbyapptransid",
+      app_id: "2553",
+      key1: "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",
+      key2: "kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz",
+      endpoint: "https://sb-openapi.zalopay.vn/v2/query",
     };
 
     let postData = {
-      appid: config.appid,
-      apptransid: req.body.apptransid, // Input your apptransid
+      app_id: config.app_id,
+      app_trans_id: req.body.apptransid, // Input your apptransid
     };
 
-    let data = postData.appid + "|" + postData.apptransid + "|" + config.key1; // appid|apptransid|key1
+    let data =
+      postData.app_id + "|" + postData.app_trans_id + "|" + config.key1; // appid|apptransid|key1
     postData.mac = CryptoJS.HmacSHA256(data, config.key1).toString();
 
     let postConfig = {
@@ -259,7 +260,7 @@ const PaymentController = {
       },
       data: qs.stringify(postData),
     };
-
+    console.log(postData);
     const responseData = await axios(postConfig)
       .then(function (response) {
         console.log(JSON.stringify(response.data));
