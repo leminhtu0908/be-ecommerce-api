@@ -346,6 +346,7 @@ const PaymentController = {
         allow_status: status,
         user: user_id,
         cart: cart,
+        isPayment: false,
       };
       const newOrder = new Order(cloneValues);
       await newOrder.save();
@@ -412,6 +413,7 @@ const PaymentController = {
         user: user_id,
         cart: cart,
         orderStatus: orderStatus.zalopay,
+        isPayment: true,
       };
       const newOrder = new Order(cloneValues);
       await newOrder.save();

@@ -65,6 +65,10 @@ const orderSchema = new mongoose.Schema(
       type: String,
       default: orderStatus.cash,
     },
+    isPayment: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
