@@ -362,6 +362,7 @@ const PaymentController = {
     }
   },
   createOrderZalopay: async (req, res) => {
+    console.log(req.body);
     try {
       const {
         order_id,
