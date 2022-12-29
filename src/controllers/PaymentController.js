@@ -380,7 +380,7 @@ const PaymentController = {
         user_id,
       } = req.body;
       const findOrderID = await Order.findOne({ order_id: order_id });
-      if (findOrderID.length > 0) {
+      if (findOrderID?.length > 0) {
         return;
       }
       const address = `${sonha},${xa}, ${huyen}, ${tinh}`;
