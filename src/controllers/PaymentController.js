@@ -164,9 +164,9 @@ const PaymentController = {
   getZaloPay: async (req, res) => {
     // APP INFO
     const config = {
-      appid: "553",
-      key1: "9phuAOYhan4urywHTh0ndEXiV3pKHr5Q",
-      key2: "Iyz2habzyr7AG8SgvoBCbKwKi3UzlLi3",
+      appid: "2553",
+      key1: "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",
+      key2: "kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz",
       endpoint: "https://sandbox.zalopay.com.vn/v001/tpe/createorder",
     };
 
@@ -235,9 +235,9 @@ const PaymentController = {
   },
   getStatusOrderCheckoutZalopay: async (req, res) => {
     const config = {
-      appid: "553",
-      key1: "9phuAOYhan4urywHTh0ndEXiV3pKHr5Q",
-      key2: "Iyz2habzyr7AG8SgvoBCbKwKi3UzlLi3",
+      appid: "2553",
+      key1: "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",
+      key2: "kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz",
       endpoint: "https://sandbox.zalopay.com.vn/v001/tpe/getstatusbyapptransid",
     };
 
