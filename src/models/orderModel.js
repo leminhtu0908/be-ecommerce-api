@@ -69,6 +69,9 @@ const orderSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    apptransid: {
+      type: String,
+    },
   },
   {
     timestamps: true,

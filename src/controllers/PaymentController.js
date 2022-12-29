@@ -376,6 +376,7 @@ const PaymentController = {
         cart,
         status,
         user_id,
+        apptransid,
       } = req.body;
       const findOrderID = await Order.findOne({ order_id: order_id });
       if (findOrderID?.length > 0) {
@@ -411,6 +412,7 @@ const PaymentController = {
         cart: cart,
         orderStatus: orderStatus.zalopay,
         isPayment: true,
+        apptransid: apptransid,
       };
       const newOrder = new Order(cloneValues);
       await newOrder.save();
