@@ -574,29 +574,29 @@ const PaymentController = {
   refundMoney: async (req, res) => {
     try {
       const config = {
-        app_id: "2553",
+        appid: "2553",
         key1: "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",
         key2: "kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz",
-        refund_url: "https://sb-openapi.zalopay.vn/v2/refund",
+        endpoint: "https://sandbox.zalopay.com.vn/v001/tpe/partialrefund",
       };
 
       const timestamp = Date.now();
       const uid = `${timestamp}${Math.floor(111 + Math.random() * 999)}`; // unique id
 
       let params = {
-        m_refund_id: `${moment().format("YYMMDD")}_${config.app_id}_${uid}`,
-        app_id: config.app_id,
+        appid: config.appid,
+        mrefundid: `${moment().format("YYMMDD")}_${config.appid}_${uid}`,
         timestamp, // miliseconds
-        zp_trans_id: req.body.zp_trans_id,
+        zptransid: req.body.zp_trans_id,
         amount: req.body.amount,
         description: "ZaloPay Refund Demo",
       };
 
       // app_id|zp_trans_id|amount|description|timestamp
       let data =
-        params.app_id +
+        params.appid +
         "|" +
-        params.zp_trans_id +
+        params.zptransid +
         "|" +
         params.amount +
         "|" +
@@ -605,7 +605,7 @@ const PaymentController = {
         params.timestamp;
       params.mac = CryptoJS.HmacSHA256(data, config.key1).toString();
       const responseData = await axios
-        .post(config.refund_url, null, { params })
+        .post(config.endpoint, null, { params })
         .then((res) => {
           return res.data;
         })
