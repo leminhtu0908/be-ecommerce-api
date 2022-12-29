@@ -172,7 +172,7 @@ const PaymentController = {
     const embed_data = {
       promotioninfo: "",
       merchantinfo: "embeddata123",
-      redirecturl: `${process.env.API_URL_PRO}/payments`,
+      redirecturl: `${process.env.API_URL_PRO}/order-status`,
       bankgroup: "ATM",
     };
 
