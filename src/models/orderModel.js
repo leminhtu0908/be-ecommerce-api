@@ -72,6 +72,9 @@ const orderSchema = new mongoose.Schema(
     apptransid: {
       type: String,
     },
+    mrefundid: {
+      type: String,
+    },
   },
   {
     timestamps: true,

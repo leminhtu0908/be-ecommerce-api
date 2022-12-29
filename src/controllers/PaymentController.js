@@ -317,6 +317,63 @@ const PaymentController = {
       return res.status(500).json({ message: error.message });
     }
   },
+  getStatusRefund: async (req, res) => {
+    try {
+      // const config = {
+      //   appid: "2553",
+      //   key1: "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",
+      //   key2: "kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz",
+      //   endpoint:
+      //     "https://sandbox.zalopay.com.vn/v001/tpe/getpartialrefundstatus",
+      // };
+
+      // const params = {
+      //   appid: config.appid,
+      //   timestamp: Date.now(), // miliseconds
+      //   mrefundid: req.body.mrefundid,
+      // };
+
+      // const data =
+      //   config.appid + "|" + params.mrefundid + "|" + params.timestamp; // appid|mrefundid|timestamp
+      // params.mac = CryptoJS.HmacSHA256(data, config.key1).toString();
+
+      // const response = axios
+      //   .get(config.endpoint, { params })
+      //   .then((res) => {
+      //     console.log(res.data);
+      //     return res.data;
+      //   })
+      //   .catch(function (error) {
+      //     console.log(error);
+      //   });
+      // res.json({ data: response });
+      const config = {
+        appid: "553",
+        key1: "9phuAOYhan4urywHTh0ndEXiV3pKHr5Q",
+        key2: "kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz",
+        // endpoint: "https://sb-openapi.zalopay.vn/v2/query_refund",
+        endpoint:
+          "https://sandbox.zalopay.com.vn/v001/tpe/getpartialrefundstatus",
+      };
+
+      const params = {
+        appid: config.appid,
+        timestamp: Date.now(), // miliseconds
+        // mrefundid: req.body.mrefundid,
+        mrefundid: "221230_000_000002",
+      };
+      const data =
+        config.appid + "|" + params.mrefundid + "|" + params.timestamp; // app_id|m_refund_id|timestamp
+      params.mac = CryptoJS.HmacSHA256(data, config.key1).toString();
+      console.log(params);
+      axios
+        .post(config.endpoint, null, { params })
+        .then((res) => console.log(res.data))
+        .catch((err) => console.log(err));
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
   createOrder: async (req, res) => {
     try {
       const {
@@ -523,6 +580,19 @@ const PaymentController = {
       });
     } catch (error) {
       return res.status(500).json({ message: error.message });
+    }
+  },
+  updateRefundID: async (req, res) => {
+    try {
+      const { apptransid, mrefundid } = req.body;
+      const orderUpdate = await Order.findOneAndUpdate(
+        { apptransid: apptransid },
+        { mrefundid: mrefundid },
+        { new: true }
+      );
+      res.json({ data: orderUpdate });
+    } catch (error) {
+      return res.status(500).json({ message: err.message });
     }
   },
   ExportExCel: async (req, res) => {

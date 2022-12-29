@@ -209,6 +209,17 @@ router.post(
   checkIfUser,
   PaymentController.getAllApptransid
 );
+router.post(
+  "/order/update/refundid",
+  checkIfUser,
+  PaymentController.updateRefundID
+);
+router.post(
+  "/order/status/refundid",
+  checkIfUser,
+  PaymentController.getStatusRefund
+);
+
 /* Dashboard */
 router.get("/dashboard", checkIfAdmin, DashboardController.getDashboard);
 module.exports = router;
