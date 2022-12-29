@@ -175,7 +175,7 @@ const PaymentController = {
       merchantinfo: "embeddata123",
       redirecturl: `${process.env.API_URL_PRO}/order-status`,
       bankgroup: "ATM",
-      zlppaymentid: "P4201372",
+      zlppaymentid: "MT09082000",
     };
 
     // const items = [
@@ -215,6 +215,7 @@ const PaymentController = {
       "|" +
       order.item;
     order.mac = CryptoJS.HmacSHA256(data, config.key1).toString();
+    console.log(order);
     // axios
     //   .post(config.endpoint, null, { params: order })
     //   .then((response) => {
