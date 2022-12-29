@@ -205,7 +205,7 @@ router.post(
 );
 router.post("/order/refund-money", checkIfUser, PaymentController.refundMoney);
 router.get(
-  "/order/query-status",
+  "/order/all-apptransid",
   checkIfUser,
   PaymentController.getAllApptransid
 );
