@@ -204,7 +204,7 @@ router.post(
   PaymentController.deleteOrderWaitingAllow
 );
 router.post("/order/refund-money", checkIfUser, PaymentController.refundMoney);
-router.get(
+router.post(
   "/order/all-apptransid",
   checkIfUser,
   PaymentController.getAllApptransid
