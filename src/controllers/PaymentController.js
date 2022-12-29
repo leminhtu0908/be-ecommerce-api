@@ -172,7 +172,7 @@ const PaymentController = {
     const embed_data = {
       promotioninfo: "",
       merchantinfo: "embeddata123",
-      redirecturl: `${process.env.API_URL_PRO}/order-status`,
+      redirecturl: `${process.env.API_URL_PRO}/payments`,
       bankgroup: "ATM",
     };
 
@@ -193,7 +193,7 @@ const PaymentController = {
       item: JSON.stringify(req.body.cart),
       embeddata: JSON.stringify(embed_data),
       amount: req.body.amount,
-      description: `Lazada - Payment for the order #${req.body.transID}`,
+      description: `Thanh toán cho đơn hàng #${req.body.transID}`,
       bankcode: "",
     };
 
