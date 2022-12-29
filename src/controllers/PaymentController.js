@@ -9,6 +9,7 @@ const User = require("../models/userModel");
 const fs = require("fs");
 const Product = require("../models/productModel");
 const qs = require("qs");
+const { orderStatus } = require("../constants/type");
 // // APP INFO
 // const configURL = {
 //   vnp_TmnCode: "UDOPNWS1",
@@ -345,6 +346,67 @@ const PaymentController = {
         allow_status: status,
         user: user_id,
         cart: cart,
+      };
+      const newOrder = new Order(cloneValues);
+      await newOrder.save();
+      await newOrder.populate("user");
+      await User.findOneAndUpdate(
+        { _id: user_id },
+        {
+          $push: { order: newOrder },
+        }
+      );
+      res.json({ newOrder: newOrder, status: "success" });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
+  createOrderZalopay: async (req, res) => {
+    try {
+      const {
+        order_id,
+        tinh,
+        huyen,
+        name,
+        email,
+        phone,
+        sonha,
+        xa,
+        product_total,
+        price_total,
+        cart,
+        status,
+        user_id,
+      } = req.body;
+      const address = `${sonha},${xa}, ${huyen}, ${tinh}`;
+      let cartInfo = [];
+      cart?.map((item) => {
+        cartInfo.push(item.name);
+        cartInfo.push(item.memory);
+        cartInfo.push(item.colors);
+        cartInfo.push(item.product_id);
+      });
+      const convertCartObject = cartInfo.reduce(
+        (a, v, index) => ({ ...a, [`key_${index}`]: v }),
+        {}
+      );
+      const { key_0, key_1, key_2, key_3 } = convertCartObject;
+      const productNameOrder = `${key_0} - ${key_1} - ${key_2}`;
+      const cloneValues = {
+        order_id: order_id,
+        product_id: key_3,
+        productNameOrder: productNameOrder,
+        fullName: name,
+        phone: phone,
+        email: email,
+        address: address,
+        total_product: product_total,
+        total_price: price_total,
+        price_pay_remaining: price_total,
+        allow_status: status,
+        user: user_id,
+        cart: cart,
+        orderStatus: orderStatus.zalopay,
       };
       const newOrder = new Order(cloneValues);
       await newOrder.save();

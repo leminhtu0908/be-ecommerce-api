@@ -179,6 +179,11 @@ router.post(
   PaymentController.getStatusOrderCheckoutZalopay
 );
 router.post("/payment/cash", checkIfUser, PaymentController.createOrder);
+router.post(
+  "/payment/zalopay-saveorder",
+  checkIfUser,
+  PaymentController.createOrderZalopay
+);
 router.post("/payment/visited/cash", PaymentController.createOrderVisited);
 router.get("/order/all", PaymentController.getAllOrder);
 router.get("/order/by-user", PaymentController.getAllOrderByUser);
