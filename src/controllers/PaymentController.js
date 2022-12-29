@@ -175,6 +175,7 @@ const PaymentController = {
       merchantinfo: "embeddata123",
       redirecturl: `${process.env.API_URL_PRO}/order-status`,
       bankgroup: "ATM",
+      zlppaymentid: "P4201372",
     };
 
     // const items = [
@@ -570,6 +571,53 @@ const PaymentController = {
         { new: true }
       );
       res.json({ message: "Hủy đơn hàng thành công" });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
+  refundMoney: async (req, res) => {
+    try {
+      const config = {
+        app_id: "2553",
+        key1: "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",
+        key2: "kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz",
+        refund_url: "https://sb-openapi.zalopay.vn/v2/refund",
+      };
+
+      const timestamp = Date.now();
+      const uid = `${timestamp}${Math.floor(111 + Math.random() * 999)}`; // unique id
+
+      let params = {
+        m_refund_id: `${moment().format("YYMMDD")}_${config.app_id}_${uid}`,
+        app_id: config.app_id,
+        timestamp, // miliseconds
+        zp_trans_id: req.body.zp_trans_id,
+        amount: req.body.amount,
+        description: "ZaloPay Refund Demo",
+      };
+
+      // app_id|zp_trans_id|amount|description|timestamp
+      let data =
+        params.app_id +
+        "|" +
+        params.zp_trans_id +
+        "|" +
+        params.amount +
+        "|" +
+        params.description +
+        "|" +
+        params.timestamp;
+      params.mac = CryptoJS.HmacSHA256(data, config.key1).toString();
+      console.log(params);
+      const responseData = await axios
+        .post(config.refund_url, null, { params })
+        .then((res) => {
+          console.log(res.data);
+          return res.data;
+        })
+        .catch((err) => console.log(err));
+
+      res.json({ data: responseData });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

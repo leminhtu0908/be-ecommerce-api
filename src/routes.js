@@ -203,6 +203,7 @@ router.post(
   checkIfUser,
   PaymentController.deleteOrderWaitingAllow
 );
+router.post("/order/refund-money", checkIfUser, PaymentController.refundMoney);
 /* Dashboard */
 router.get("/dashboard", checkIfAdmin, DashboardController.getDashboard);
 module.exports = router;
