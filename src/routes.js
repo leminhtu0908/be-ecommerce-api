@@ -204,6 +204,11 @@ router.post(
   PaymentController.deleteOrderWaitingAllow
 );
 router.post("/order/refund-money", checkIfUser, PaymentController.refundMoney);
+router.get(
+  "/order/query-status",
+  checkIfUser,
+  PaymentController.getAllApptransid
+);
 /* Dashboard */
 router.get("/dashboard", checkIfAdmin, DashboardController.getDashboard);
 module.exports = router;

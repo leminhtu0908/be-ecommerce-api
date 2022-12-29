@@ -299,6 +299,24 @@ const PaymentController = {
       return res.status(500).json({ message: error.message });
     }
   },
+  getAllApptransid: async (req, res) => {
+    try {
+      const { user_id } = req.body;
+      const order = await Order.find().populate([
+        { path: "user", select: "_id" },
+      ]);
+      const findUser = order?.filter(
+        (item) => item.user.id === user_id && item.isPayment === true
+      );
+      let newData = [];
+      findUser.map((item) => {
+        newData.push({ apptransid: item.apptransid });
+      });
+      res.json({ data: newData });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
   createOrder: async (req, res) => {
     try {
       const {
