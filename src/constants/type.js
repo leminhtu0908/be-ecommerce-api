@@ -11,4 +11,8 @@ const TypeNew = {
   New: "New",
   Introduce: "Introduce",
 };
-module.exports = { UserRole, UserGender, TypeNew };
+const orderStatus = {
+  cash: "Tiền mặt",
+  zalopay: "Zalopay",
+};
+module.exports = { UserRole, UserGender, TypeNew, orderStatus };

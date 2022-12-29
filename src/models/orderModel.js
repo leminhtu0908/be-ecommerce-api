@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { orderStatus } = require("../constants/type");
 const Schema = mongoose.Schema;
 
 const orderSchema = new mongoose.Schema(
@@ -60,6 +61,10 @@ const orderSchema = new mongoose.Schema(
       ref: "User",
     },
     cart: [],
+    orderStatus: {
+      type: String,
+      default: orderStatus.cash,
+    },
   },
   {
     timestamps: true,
