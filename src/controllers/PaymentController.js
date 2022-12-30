@@ -302,9 +302,11 @@ const PaymentController = {
   getAllApptransid: async (req, res) => {
     try {
       const { user_id } = req.body;
-      const order = await Order.find().populate([
-        { path: "user", select: "_id" },
-      ]);
+      const order = await Order.find()
+        .populate([{ path: "user", select: "_id" }])
+        .sort({
+          createdAt: -1,
+        });
       const findUser = order?.filter(
         (item) => item.user.id === user_id && item.isPayment === true
       );
@@ -350,7 +352,7 @@ const PaymentController = {
       const config = {
         appid: "553",
         key1: "9phuAOYhan4urywHTh0ndEXiV3pKHr5Q",
-        key2: "kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz",
+        key2: "Iyz2habzyr7AG8SgvoBCbKwKi3UzlLi3",
         // endpoint: "https://sb-openapi.zalopay.vn/v2/query_refund",
         endpoint:
           "https://sandbox.zalopay.com.vn/v001/tpe/getpartialrefundstatus",
@@ -359,17 +361,19 @@ const PaymentController = {
       const params = {
         appid: config.appid,
         timestamp: Date.now(), // miliseconds
-        // mrefundid: req.body.mrefundid,
-        mrefundid: "221230_000_000002",
+        mrefundid: req.body.mrefundid,
+        // mrefundid: "221230_000_000002",
       };
       const data =
         config.appid + "|" + params.mrefundid + "|" + params.timestamp; // app_id|m_refund_id|timestamp
       params.mac = CryptoJS.HmacSHA256(data, config.key1).toString();
-      console.log(params);
-      axios
-        .post(config.endpoint, null, { params })
-        .then((res) => console.log(res.data))
+      const response = await axios
+        .get(config.endpoint, { params })
+        .then((res) => {
+          return res.data;
+        })
         .catch((err) => console.log(err));
+      res.json({ data: response });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
