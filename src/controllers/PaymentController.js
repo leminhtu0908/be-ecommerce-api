@@ -288,41 +288,51 @@ const PaymentController = {
     }
   },
   getAllOrderByUser: async (req, res) => {
-    // try {
-    //   const data = await Order.find()
-    //     .populate([{ path: "user", select: "_id" }])
-    //     .sort({
-    //       createdAt: -1,
-    //     });
-    //   res.send(data);
-    // } catch (error) {
-    //   return res.status(500).json({ message: error.message });
-    // }
     try {
-      const userid = req.params.userid;
-      let perPage = req.query.per_page || 10; // số lượng sản phẩm xuất hiện trên 1 page
-      let page = req.query.current_page || 0;
-      Order.find()
-        .populate([{ path: "user", select: "_id" }]) // find tất cả các data
-        .skip(perPage * page - perPage) // Trong page đầu tiên sẽ bỏ qua giá trị là 0
-        .limit(perPage)
-        .sort({
-          createdAt: -1,
+      const { orderId } = req.query;
+      if (orderId === "") {
+        const data = await Order.find()
+          .populate([{ path: "user", select: "_id" }])
+          .sort({ createdAt: -1 });
+        res.send(data);
+      } else {
+        const data = await Order.find({
+          order_id: { $regex: orderId, $options: "$i" },
         })
-        .exec((err, order) => {
-          Order.countDocuments((err, count) => {
-            if (err) return next(err);
-            res.send({
-              content: order,
-              size: perPage,
-              totalElements: count,
-              totalPages: Math.ceil(count / perPage),
-            }); // Trả về dữ liệu các sản phẩm theo định dạng như JSON, XML,...
+          .populate([{ path: "user", select: "_id" }])
+          .sort({
+            createdAt: -1,
           });
-        });
+        res.send(data);
+      }
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
+    // try {
+    //   const userid = req.params.userid;
+    //   let perPage = req.query.per_page || 10; // số lượng sản phẩm xuất hiện trên 1 page
+    //   let page = req.query.current_page || 0;
+    //   Order.find()
+    //     .populate([{ path: "user", select: "_id" }]) // find tất cả các data
+    //     .skip(perPage * page - perPage) // Trong page đầu tiên sẽ bỏ qua giá trị là 0
+    //     .limit(perPage)
+    //     .sort({
+    //       createdAt: -1,
+    //     })
+    //     .exec((err, order) => {
+    //       Order.countDocuments((err, count) => {
+    //         if (err) return next(err);
+    //         res.send({
+    //           content: order,
+    //           size: perPage,
+    //           totalElements: count,
+    //           totalPages: Math.ceil(count / perPage),
+    //         }); // Trả về dữ liệu các sản phẩm theo định dạng như JSON, XML,...
+    //       });
+    //     });
+    // } catch (error) {
+    //   return res.status(500).json({ message: error.message });
+    // }
   },
   getAllApptransid: async (req, res) => {
     try {

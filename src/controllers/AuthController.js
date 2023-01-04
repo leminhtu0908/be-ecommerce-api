@@ -130,7 +130,7 @@ const AuthController = {
         ) {
           return res
             .status(ErrorCodes.Bad_Request)
-            .send("Email hoặc mật khẩu không chính xát");
+            .send("Email hoặc mật khẩu không chính xác");
         }
         if (user.banned) {
           return res

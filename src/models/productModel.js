@@ -101,6 +101,12 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    comments: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Comment",
+      },
+    ],
   },
   {
     timestamps: true,

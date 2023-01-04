@@ -4,6 +4,7 @@ const BannerCtrl = require("./controllers/BannerCtrl");
 const BrandCtrl = require("./controllers/BrandCtrl");
 const { CategoryCtrl } = require("./controllers/CategoryCtrl");
 const ColorCtrl = require("./controllers/ColorCtrl");
+const CommentCtrl = require("./controllers/CommentCtrl");
 const DashboardController = require("./controllers/DashboardCtrl");
 const ImageCtrl = require("./controllers/ImageCtrl");
 const MemoryCtrl = require("./controllers/MemoryCtrl");
@@ -219,6 +220,11 @@ router.post(
   checkIfUser,
   PaymentController.getStatusRefund
 );
+
+/* Comments */
+
+// router.get("/comment/all", CommentCtrl.getAllComments);
+router.post("/comment/create", checkIfUser, CommentCtrl.createCommentUser);
 
 /* Dashboard */
 router.get("/dashboard", checkIfAdmin, DashboardController.getDashboard);
