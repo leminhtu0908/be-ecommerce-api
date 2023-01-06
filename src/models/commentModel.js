@@ -8,9 +8,8 @@ const commentSchema = new mongoose.Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
-    product: {
-      type: Schema.Types.ObjectId,
-      ref: "Product",
+    product_id: {
+      type: String,
     },
     parent: [],
     status: {

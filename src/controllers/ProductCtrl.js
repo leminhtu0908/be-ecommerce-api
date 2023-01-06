@@ -396,10 +396,6 @@ const ProductCtrl = {
             path: "typeProduct",
             select: "-products",
           },
-          {
-            path: "user",
-            select: "_id email fullName image",
-          },
         ])
         .sort({ createdAt: -1 });
       res.send({ products: products });
