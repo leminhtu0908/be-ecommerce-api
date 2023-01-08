@@ -1,17 +1,13 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const commentSchema = new mongoose.Schema(
+const replySchema = new mongoose.Schema(
   {
     content: { type: String },
     user: {
       type: Schema.Types.ObjectId,
       ref: "User",
     },
-    product_id: {
-      type: String,
-    },
-    reply: [],
     status: {
       type: Boolean,
       default: true,
@@ -21,5 +17,5 @@ const commentSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-const Comment = mongoose.model("Comment", commentSchema);
-module.exports = Comment;
+const Reply = mongoose.model("Reply", replySchema);
+module.exports = Reply;

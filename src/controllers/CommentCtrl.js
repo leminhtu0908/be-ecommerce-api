@@ -60,6 +60,58 @@ const CommentCtrl = {
       return res.status(500).json({ message: error.message });
     }
   },
+  createReplyCommentUser: async (req, res) => {
+    try {
+      const { username, image, replyComment, id } = req.body;
+      const idReply = Math.floor(Math.random() * 1000000000);
+      const newReplyComment = {
+        username,
+        image,
+        replyComment,
+        idReply,
+      };
+      await Comment.findOneAndUpdate(
+        { _id: id },
+        { $push: { reply: newReplyComment } }
+      );
+      res.status(200).json({ messagess: "Phản hồi thành công" });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
+  updateReplyCommentUser: async (req, res) => {
+    try {
+      const { replyComment, id, idReply } = req.body;
+      const comment = await Comment.findById({ _id: id });
+      const filterReply = comment?.reply?.filter(
+        (item) => item.idReply === idReply
+      );
+      const findReply = comment?.reply?.filter(
+        (item) => item.idReply !== idReply
+      );
+      let converStringReply;
+      if (filterReply?.length > 0) {
+        converStringReply = filterReply[0];
+      }
+      const newValues = {
+        ...converStringReply,
+        replyComment: replyComment,
+      };
+      findReply.push(newValues);
+      const obj = findReply.reduce(function (acc, cur, i) {
+        acc[i] = cur;
+        return acc;
+      }, {});
+      console.log(obj);
+      await Comment.findOneAndUpdate(
+        { _id: id },
+        { $push: { rely: [...findReply] } }
+      );
+      res.json({ messagess: "Cập nhật thành công", result: findReply });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
 };
 
 module.exports = CommentCtrl;

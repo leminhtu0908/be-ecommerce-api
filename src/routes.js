@@ -227,6 +227,13 @@ router.get("/comment/all", CommentCtrl.getAllComments);
 router.post("/comment/create", checkIfUser, CommentCtrl.createCommentUser);
 router.put("/comment/update", checkIfUser, CommentCtrl.updateComment);
 router.delete("/comment/delete/:id", checkIfUser, CommentCtrl.deleteComment);
+//Reply comment
+router.post("/comment/reply", checkIfUser, CommentCtrl.createReplyCommentUser);
+router.put(
+  "/comment/reply/update",
+  checkIfUser,
+  CommentCtrl.updateReplyCommentUser
+);
 
 /* Dashboard */
 router.get("/dashboard", checkIfAdmin, DashboardController.getDashboard);
