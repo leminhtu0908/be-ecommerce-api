@@ -647,6 +647,7 @@ const PaymentController = {
         "Số lượng sản phẩm",
         "Tổng tiền",
         "Thời gian đặt hàng",
+        "Hình thức thanh toán",
         "Tình trạng đơn hàng",
       ];
       const workSheetName = "Đơn đặt hàng";
@@ -661,6 +662,7 @@ const PaymentController = {
           order.total_product,
           order.total_price,
           order.createdAt,
+          order.orderStatus,
           order.allow_status === 1
             ? "Đã duyệt"
             : order.allow_status === 0
@@ -677,7 +679,7 @@ const PaymentController = {
       xlsx.write(workBook, { bookType: "xlsx", type: "binary" });
       xlsx.writeFile(workBook, exportPath);
       res.setHeader("Content-Type", "application/force-download");
-      res.setHeader("Content-Disposition", "attachment;filename=" + exportPath);
+      res.setHeader("Content-Disposition", "attachment;filename=order.xlsx");
       res.download(exportPath, function (err) {
         if (err) {
           return res.status(500).json({ message: err.message });

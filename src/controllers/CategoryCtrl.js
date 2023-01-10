@@ -25,8 +25,9 @@ const CategoryCtrl = {
     try {
       const { name } = req.body;
       const category = await Category.findOne({ name });
-      if (category)
-        return res.status(400).json({ message: "Danh mục đã tồn tại" });
+      if (category) {
+        return res.status(500).send("Danh mục đã tồn tại");
+      }
       const newCategory = new Category({ name });
       await newCategory.save();
       res.json({ category: newCategory, message: "Tạo danh mục thành công!" });

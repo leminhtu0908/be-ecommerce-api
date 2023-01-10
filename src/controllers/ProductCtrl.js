@@ -504,10 +504,21 @@ const ProductCtrl = {
     try {
       const { id, imagePublicId } = req.body;
       const cartOrder = await Order.find();
-      const checkOrder = cartOrder.filter((item) =>
-        item.cart.filter((cart) => cart.product_id === id)
+      let arrayTemp = [];
+      cartOrder?.map((item) => {
+        if (item.cart?.length > 0) {
+          item?.cart?.filter((itemImage) => {
+            arrayTemp.push(itemImage);
+          });
+        }
+      });
+      const findItem = arrayTemp?.filter(
+        (item) => item.imagePublicId === imagePublicId
       );
-      if (checkOrder.length > 0) {
+      // const checkOrder = cartOrder.filter((item) =>
+      //   item.cart.filter((cart) => cart.product_id === id)
+      // );
+      if (findItem.length > 0) {
         return res.status(500).send("Sản phẩm đã được đặt hàng, Không thể xóa");
       }
       if (imagePublicId) {

@@ -111,6 +111,8 @@ router.post(
   [checkIfAdmin, multerUpload.array("image")],
   ImageCtrl.upLoadMultiImage
 );
+router.post("/image/delete", checkIfAdmin, ImageCtrl.deleteImage);
+
 /*
  *Banner
  */

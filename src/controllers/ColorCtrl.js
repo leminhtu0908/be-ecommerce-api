@@ -35,7 +35,9 @@ const ColorCtrl = {
     try {
       const { name } = req.body;
       const color = await Color.findOne({ name });
-      if (color) return res.status(400).send("Màu đã tồn tại");
+      if (color) {
+        return res.status(500).send("Màu đã tồn tại");
+      }
       const newColor = new Color({ name });
       await newColor.save();
       res.json({ color: newColor, message: "Tạo màu thành công" });

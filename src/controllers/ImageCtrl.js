@@ -1,5 +1,11 @@
+const ErrorCodes = require("../constants/errorCodes");
+const ErrorMessages = require("../constants/errorMessages");
 const Image = require("../models/imageModel");
-const { uploadToCloudinary } = require("../utils/cloudinary");
+const Product = require("../models/productModel");
+const {
+  uploadToCloudinary,
+  deleteFromCloudinary,
+} = require("../utils/cloudinary");
 
 const ImageCtrl = {
   getAllImage: async (req, res) => {
@@ -98,6 +104,55 @@ const ImageCtrl = {
         newimage,
         message: "Tải ảnh thành công",
       });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
+  deleteImage: async (req, res) => {
+    try {
+      const { id, imagePublicId } = req.body;
+      const products = await Product.find().populate([
+        { path: "category", select: "-products" },
+        {
+          path: "colors",
+          select: "-products",
+        },
+        {
+          path: "imageMulti",
+        },
+        {
+          path: "brand",
+          select: "-products",
+        },
+        {
+          path: "typeProduct",
+          select: "-products",
+        },
+      ]);
+      let arrayTemp = [];
+      products?.map((item) => {
+        if (item.imageMulti?.length > 0) {
+          item?.imageMulti?.filter((itemImage) => {
+            arrayTemp.push(itemImage);
+          });
+        }
+      });
+      const findItem = arrayTemp?.filter(
+        (item) => item.imagePublicId === imagePublicId
+      );
+      if (findItem?.length > 0) {
+        return res
+          .status(500)
+          .send("Không thể xóa, Ảnh được chứa trong sản phẩm");
+      }
+      if (imagePublicId) {
+        const deleteImage = await deleteFromCloudinary(imagePublicId);
+        if (deleteImage.result !== "ok") {
+          return res.status(ErrorCodes.Internal).send(ErrorMessages.Generic);
+        }
+      }
+      await Image.findByIdAndDelete(id);
+      res.json({ message: "Xóa ảnh sản phẩm thành công" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

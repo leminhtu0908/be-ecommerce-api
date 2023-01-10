@@ -13,8 +13,9 @@ const BrandCtrl = {
     try {
       const { name } = req.body;
       const brand = await Brand.findOne({ name });
-      if (brand)
-        return res.status(400).json({ message: "Nhà sản xuất đã tồn tại" });
+      if (brand) {
+        return res.status(500).send("Nhà sản xuất đã tồn tại");
+      }
       const newBrand = new Brand({ name });
       await newBrand.save();
       res.json({ brand: newBrand, message: "Tạo nhà sản xuất thành công" });

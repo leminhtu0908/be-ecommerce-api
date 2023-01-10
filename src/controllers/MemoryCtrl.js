@@ -13,7 +13,9 @@ const MemoryCtrl = {
     try {
       const { name } = req.body;
       const memory = await Memory.findOne({ name });
-      if (memory) return res.status(400).send("Bộ nhớ đã tồn tại");
+      if (memory) {
+        return res.status(500).send("Bộ nhớ đã tồn tại");
+      }
       const newMemory = await Memory({ name });
       await newMemory.save();
       res.json({ memory: newMemory, message: "Tạo bộ nhớ thành công" });
